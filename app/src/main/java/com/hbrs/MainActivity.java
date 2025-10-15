@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,7 +18,6 @@ import com.hbrs.Views.JoystickView;
 public class MainActivity extends AppCompatActivity {
 
     ORB orb;
-    private JoystickView joystickView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +25,6 @@ public class MainActivity extends AppCompatActivity {
 
         orb = new ORB( this );
         setContentView(R.layout.activity_main);
-        joystickView = findViewById(R.id.joystickView);
 
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
@@ -78,53 +75,29 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void OnClickLF(View view) {
-        Log.i("Test", "BTN LF");
-        orb.setMotor( ORB.M1, ORB.SPEED_MODE, -500, 0);
-        orb.setMotor( ORB.M4, ORB.SPEED_MODE, 0, 0);
-    }
-
-    public void OnClickRF(View view) {
-        Log.i("Test", "BTN RF");
-        orb.setMotor( ORB.M1, ORB.SPEED_MODE, 0, 0);
-        orb.setMotor( ORB.M4, ORB.SPEED_MODE, +500, 0);
-    }
-
-    public void OnClickLB(View view) {
-        Log.i("Test", "BTN LB");
-        orb.setMotor( ORB.M1, ORB.SPEED_MODE, +500, 0);
-        orb.setMotor( ORB.M4, ORB.SPEED_MODE, 0, 0);
-    }
-
-    public void OnClickRB(View view) {
-        Log.i("Test", "BTN RB");
-        orb.setMotor( ORB.M1, ORB.SPEED_MODE, 0, 0);
-        orb.setMotor( ORB.M4, ORB.SPEED_MODE, -500, 0);
-    }
-
     public void OnClickJoystick(View view) {
         if (view instanceof JoystickView) {
             JoystickView joystick = (JoystickView) view;
 
+            // lef = - | right = +
             float x = joystick.getCurrentXPercent();
+            // down = - | up = +
             float y = joystick.getCurrentYPercent();
 
-            // Invert Y so up = forward
-            y = -y;
-            x = -x;
-
             // Clamp total power
-            float maxSpeed = 1000;
+            float maxSpeed = 1000f;
 
             // Tank drive formula
             float leftSpeed = y + x;
             float rightSpeed = y - x;
 
             int leftMotor = (int) (leftSpeed * maxSpeed);
-            int rightMotor = (int) (rightSpeed * -maxSpeed);
+            int rightMotor = (int) (rightSpeed * -maxSpeed); // minus for inverted motor
 
             orb.setMotor(ORB.M1, ORB.SPEED_MODE, leftMotor, 0);  // Left motor
             orb.setMotor(ORB.M4, ORB.SPEED_MODE, rightMotor, 0); // Right motor
+
+            Log.i("Test", String.format("Joystick: (x: %.4f, y: %.4f) | Robot: (LM: %d, RM: %d)", x, y, leftMotor, rightMotor));
         }
     }
 }
