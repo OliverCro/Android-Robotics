@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "DemoActivity"
+rootProject.name = "RemoteControl"
 include(":app")
  
