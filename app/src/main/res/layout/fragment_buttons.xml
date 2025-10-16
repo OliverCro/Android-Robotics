@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="8dp">
+
+    <!-- Row 1: Forward -->
+    <Button
+        android:id="@+id/btn_forward"
+        android:layout_width="111dp"
+        android:layout_height="80dp"
+        android:text="Forward"
+        android:layout_margin="8dp" />
+
+    <!-- Row 2: Left + Stop + Right -->
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/btn_left"
+            android:layout_width="111dp"
+            android:layout_height="80dp"
+            android:text="Left"
+            android:layout_margin="8dp" />
+
+        <Button
+            android:id="@+id/btn_stop"
+            android:layout_width="111dp"
+            android:layout_height="80dp"
+            android:text="Stop"
+            android:layout_margin="8dp" />
+
+        <Button
+            android:id="@+id/btn_right"
+            android:layout_width="111dp"
+            android:layout_height="80dp"
+            android:text="Right"
+            android:layout_margin="8dp" />
+    </LinearLayout>
+
+    <!-- Row 3: Backward -->
+    <Button
+        android:id="@+id/btn_backward"
+        android:layout_width="111dp"
+        android:layout_height="80dp"
+        android:text="Backward"
+        android:layout_margin="8dp" />
+
+</LinearLayout>

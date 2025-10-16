@@ -21,7 +21,7 @@ import com.hbrs.ORB.ORB;
 import com.hbrs.ORB.ORBManager;
 import com.hbrs.Views.CameraFragment;
 import com.hbrs.Views.HomeFragment;
-import com.hbrs.Views.JoystickFragment;
+import com.hbrs.Views.ControlFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Create an orb
         orb = ORBManager.getInstance(this);
 
         // Toolbar + Drawer setup
@@ -79,11 +80,11 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.nav_joystick) {
+        if (id == R.id.nav_analog) {
             // Create JoystickFragment and set to contentFrame
             getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.content_frame, new JoystickFragment())
+                    .replace(R.id.content_frame, new ControlFragment())
                     .commit();
         } else if (id == R.id.nav_camera) {
             // Create CameraFragment and set to contentFrame
@@ -144,6 +145,7 @@ public class MainActivity extends AppCompatActivity
                         try {
                             orb.openBT(BT_DeviceListActivity.getDeviceFromIntent(data));
                             setConnectionState(ConnectionState.CONNECTED);
+                            ORBManager.ConfigureMotors();
                         } catch(Exception e) {
                             setConnectionState(ConnectionState.FAILED);
                         }

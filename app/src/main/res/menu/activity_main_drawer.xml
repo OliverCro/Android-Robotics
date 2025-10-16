@@ -1,7 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/nav_joystick"
-        android:title="Joystick Control" />
+        android:id="@+id/nav_analog"
+        android:title="Analog Control" />
     <item
         android:id="@+id/nav_camera"
         android:title="Camera Control" />
