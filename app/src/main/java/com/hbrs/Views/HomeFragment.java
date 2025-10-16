@@ -15,25 +15,49 @@ import com.hbrs.R;
 
 public class HomeFragment extends Fragment {
 
+    private Button connectBtn;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_home, container, false);
 
-        Button connectBtn = view.findViewById(R.id.btn_connect);
+        View view = inflater.inflate(R.layout.fragment_home, container, false);
+        connectBtn = view.findViewById(R.id.btn_connect);
+
         connectBtn.setOnClickListener(v -> {
-            // Call MainActivity’s connect handler
-            MainActivity main = (MainActivity) requireActivity();
-            main.OnClickConnect(v);
+            ((MainActivity) requireActivity()).OnClickConnect(v);
         });
+
+        // Sync initial state
+        ((MainActivity) requireActivity()).setConnectionState(
+                ((MainActivity) requireActivity()).getConnectionState()
+        );
 
         return view;
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void updateButtonState(MainActivity.ConnectionState state) {
+        if (connectBtn == null) return;
+
+        switch (state) {
+            case DISCONNECTED:
+                connectBtn.setText("Connect");
+                connectBtn.setEnabled(true);
+                break;
+            case CONNECTING:
+                connectBtn.setText("Connecting...");
+                connectBtn.setEnabled(false);
+                break;
+            case CONNECTED:
+                connectBtn.setText("Disconnect");
+                connectBtn.setEnabled(true);
+                break;
+            case FAILED:
+                connectBtn.setText("Failed — Try Again");
+                connectBtn.setEnabled(true);
+                break;
+        }
     }
 }

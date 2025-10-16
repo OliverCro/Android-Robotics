@@ -10,6 +10,11 @@
         android:id="@+id/btn_connect"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="OnConnect"
-        android:text="Connect Bluetooth" />
+        android:text="Connect"
+        android:textSize="18sp"
+        android:backgroundTint="?attr/colorPrimary"
+        android:textColor="@android:color/white"
+        android:padding="12dp"
+        android:layout_margin="8dp"/>
+
 </LinearLayout>

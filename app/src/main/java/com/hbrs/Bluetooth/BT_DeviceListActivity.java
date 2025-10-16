@@ -42,8 +42,6 @@ public class BT_DeviceListActivity extends Activity
     {
         parent = _parent;
 
-
-
         Intent serverIntent = new Intent(parent, BT_DeviceListActivity.class);
         parent.startActivityForResult(serverIntent, requestCode);
     }
@@ -70,7 +68,6 @@ public class BT_DeviceListActivity extends Activity
         super.onCreate(savedInstanceState);
 
         if (ActivityCompat.checkSelfPermission(parent, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-
 
             // Create the result Intent and include the MAC address
             Intent intent = new Intent();
