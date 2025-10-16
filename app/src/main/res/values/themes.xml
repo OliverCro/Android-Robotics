@@ -6,4 +6,13 @@
     </style>
 
     <style name="Theme.RemoteControl" parent="Base.Theme.RemoteControl" />
+
+    <style name="Theme.RemoteControl.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.RemoteControl.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.RemoteControl.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>

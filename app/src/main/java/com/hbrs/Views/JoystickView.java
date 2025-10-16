@@ -26,6 +26,8 @@ public class JoystickView extends View {
     // Last handle displacement
     private float currentXPercent = 0f;
     private float currentYPercent = 0f;
+    private OnMoveListener moveListener;
+
 
     public JoystickView(Context context) {
         super(context);
@@ -62,6 +64,14 @@ public class JoystickView extends View {
 
         baseRadius = Math.min(width, height) / 3f;
         handleRadius = baseRadius / 3.5f;
+    }
+
+    public interface OnMoveListener {
+        void onMove(float xPercent, float yPercent);
+    }
+
+    public void setOnMoveListener(OnMoveListener listener) {
+        this.moveListener = listener;
     }
 
     @Override
@@ -118,6 +128,10 @@ public class JoystickView extends View {
                 // Only trigger click if joystick is NOT centered
                 if (Math.abs(currentXPercent) > 0.025f || Math.abs(currentYPercent) > 0.025f) {
                     performClick();
+
+                    if (moveListener != null) {
+                        moveListener.onMove(currentXPercent, getCurrentYPercent());
+                    }
                 }
 
                 invalidate();

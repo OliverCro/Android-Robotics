@@ -2,102 +2,94 @@ package com.hbrs;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 
-import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.widget.Toolbar;
 
+import com.google.android.material.navigation.NavigationView;
 import com.hbrs.Bluetooth.BT_DeviceListActivity;
 import com.hbrs.ORB.ORB;
-import com.hbrs.Views.JoystickView;
+import com.hbrs.ORB.ORBManager;
+import com.hbrs.Views.CameraFragment;
+import com.hbrs.Views.HomeFragment;
+import com.hbrs.Views.JoystickFragment;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener {
 
-    ORB orb;
+    private DrawerLayout drawerLayout;
+    private ORB orb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        orb = new ORB( this );
         setContentView(R.layout.activity_main);
 
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_main);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+        orb = ORBManager.getInstance(this);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        drawerLayout = findViewById(R.id.drawer_layout);
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
+        // Header connect button
+        View headerView = navigationView.getHeaderView(0);
+        Button connectBtn = headerView.findViewById(R.id.btn_connect);
+        connectBtn.setOnClickListener(v -> OnClickConnect(v));
+
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawerLayout, toolbar,
+                R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawerLayout.addDrawerListener(toggle);
+
+        // Set HomeFragment when app is created
+        if (savedInstanceState == null) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.content_frame, new HomeFragment())
+                    .commit();
+        }
+
+        toggle.syncState();
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.nav_joystick) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.content_frame, new JoystickFragment())
+                    .commit();
+        } else if (id == R.id.nav_camera) {
+            // TODO: add camera fragment
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.content_frame, new CameraFragment())
+                    .commit();
+        }
+
+        drawerLayout.closeDrawer(GravityCompat.START);
+        return true;
     }
 
     public void OnClickConnect(View view) {
-        Log.i("Test", "BTN Connect Clicked");
         BT_DeviceListActivity.start(this, 50);
     }
 
     @Override
-    public void onDestroy()
-    {
+    protected void onDestroy() {
         orb.close();
         super.onDestroy();
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
-        super.onActivityResult(requestCode,resultCode,data);
-        switch(requestCode)
-        {
-            case 50:
-                switch(resultCode)
-                {
-                    case BT_DeviceListActivity.RESULT_OK:
-                        Log.i("Test",BT_DeviceListActivity.getDeviceFromIntent(data).toString());
-                        orb.openBT( BT_DeviceListActivity.getDeviceFromIntent(data));
-
-                        orb.configMotor(ORB.M1, 144, 50, 50, 30);
-                        orb.configMotor(ORB.M4, 144, 50, 50, 30);
-
-                        break;
-                    case BT_DeviceListActivity.RESULT_CANCELED:
-                        Log.i("Test","canceled");
-                        break;
-                    default:
-                        Log.i("Test", "Enable permissions first");
-                        break;
-                }
-                break;
-        }
-    }
-
-    public void OnClickJoystick(View view) {
-        if (view instanceof JoystickView) {
-            JoystickView joystick = (JoystickView) view;
-
-            // lef = - | right = +
-            float x = joystick.getCurrentXPercent();
-            // down = - | up = +
-            float y = joystick.getCurrentYPercent();
-
-            // Clamp total power
-            float maxSpeed = 1000f;
-
-            // Tank drive formula
-            float leftSpeed = y + x;
-            float rightSpeed = y - x;
-
-            int leftMotor = (int) (leftSpeed * maxSpeed);
-            int rightMotor = (int) (rightSpeed * -maxSpeed); // minus for inverted motor
-
-            orb.setMotor(ORB.M1, ORB.SPEED_MODE, leftMotor, 0);  // Left motor
-            orb.setMotor(ORB.M4, ORB.SPEED_MODE, rightMotor, 0); // Right motor
-
-            Log.i("Test", String.format("Joystick: (x: %.4f, y: %.4f) | Robot: (LM: %d, RM: %d)", x, y, leftMotor, rightMotor));
-        }
     }
 }

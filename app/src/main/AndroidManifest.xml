@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-
-    <!-- Permissions !-->
+    <!-- Permissions ! -->
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
@@ -16,7 +15,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.RemoteControl">
-
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -30,10 +28,7 @@
         <activity
             android:name=".Bluetooth.BT_DeviceListActivity"
             android:label="Select BT Device"
-            android:theme="@android:style/Theme.Dialog">
-        </activity>
-
-
+            android:theme="@android:style/Theme.Dialog"></activity>
     </application>
 
 </manifest>
