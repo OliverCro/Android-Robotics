@@ -1,5 +1,6 @@
 package com.hbrs.Views;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -14,6 +15,7 @@ public class JoystickView extends View {
     // Circles to Paint
     private Paint basePaint;
     private Paint handlePaint;
+    private Paint centerDotPaint;
 
     // Proportions
     private float baseRadius;
@@ -24,8 +26,8 @@ public class JoystickView extends View {
     private PointF handlePosition;
 
     // Last handle displacement
-    private float currentXPercent = 0f;
-    private float currentYPercent = 0f;
+    private float xPercent = 0f;
+    private float yPercent = 0f;
     private OnMoveListener moveListener;
 
 
@@ -49,11 +51,13 @@ public class JoystickView extends View {
         handlePaint.setColor(Color.GREEN);
         handlePaint.setStyle(Paint.Style.FILL);
 
+        centerDotPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        centerDotPaint.setColor(Color.BLACK);
+        centerDotPaint.setStyle(Paint.Style.FILL);
+        centerDotPaint.setStrokeWidth(15f);
+
         center = new PointF();
         handlePosition = new PointF();
-
-        // Make clickable to use OnClick
-        setClickable(true);
     }
 
     @Override
@@ -80,12 +84,15 @@ public class JoystickView extends View {
         super.onDraw(canvas);
 
         canvas.drawCircle(center.x, center.y, baseRadius, basePaint);
+        canvas.drawPoint(center.x, center.y, centerDotPaint);
         canvas.drawCircle(handlePosition.x, handlePosition.y, handleRadius, handlePaint);
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         // Keep track of finger position
+        // x is tracked correctly | negative : left - positive : right
+        // y is inverse           |       up : left - positive : down
         float touchX = event.getX();
         float touchY = event.getY();
 
@@ -111,26 +118,25 @@ public class JoystickView extends View {
                 }
 
                 // Set values to read from while onClick event
-                currentXPercent = (handlePosition.x - center.x) / baseRadius;
-                currentYPercent = (handlePosition.y - center.y) / baseRadius;
+                xPercent = (handlePosition.x - center.x) / baseRadius;
+                yPercent = (handlePosition.y - center.y) / baseRadius;
 
                 // Scale diagonals so corners are 0.5 instead of 1.0
-                float absX = Math.abs(currentXPercent);
-                float absY = Math.abs(currentYPercent);
+                float absX = Math.abs(xPercent);
+                float absY = Math.abs(yPercent);
                 float sum = absX + absY;
                 if (sum > 1f) {
                     float factor = 1f / sum;
-                    currentXPercent *= factor;
-                    currentYPercent *= factor;
+                    xPercent *= factor;
+                    yPercent *= factor;
                 }
 
-
                 // Only trigger click if joystick is NOT centered
-                if (Math.abs(currentXPercent) > 0.025f || Math.abs(currentYPercent) > 0.025f) {
-                    performClick();
+                if (Math.abs(xPercent) > 0.025f || Math.abs(yPercent) > 0.025f) {
 
+                    // Trigger listener
                     if (moveListener != null) {
-                        moveListener.onMove(currentXPercent, getCurrentYPercent());
+                        moveListener.onMove(xPercent, -1.0f * yPercent);
                     }
                 }
 
@@ -140,38 +146,20 @@ public class JoystickView extends View {
             // Aboarded or ended gesture
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
-                // Reset joystick to center
+                // Reset joystick to center and stop robot
                 handlePosition.set(center.x, center.y);
-                currentXPercent = 0f;
-                currentYPercent = 0f;
+                xPercent = 0f;
+                yPercent = 0f;
 
-                performClick();
+                // Trigger listener
+                if (moveListener != null) {
+                    moveListener.onMove(0.0f, 0.0f);
+                }
+
                 invalidate();
                 break;
         }
 
         return true;
-    }
-
-    @Override
-    public boolean performClick() {
-        // Required for accessibility and onClick to work properly
-        return super.performClick();
-    }
-
-    /***
-     *
-     * @return left = - | right = +
-     */
-    public float getCurrentXPercent() {
-        return currentXPercent;
-    }
-
-    /***
-     *
-     * @return up = + | down = -
-     */
-    public float getCurrentYPercent() {
-        return -1.0f * currentYPercent;
     }
 }
