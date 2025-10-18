@@ -1,7 +1,7 @@
 package com.hbrs.Views;
 
-import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -10,65 +10,33 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.hbrs.R;
+
 public class JoystickView extends View {
 
-    // Circles to Paint
+    // === Customizable attributes ===
+    private int defaultSizePx;
+    private int baseColor;
+    private int handleColor;
+    private int centerDotColor;
+    private float baseRadiusRatio;
+    private float handleRadiusRatio;
+
+    // === Paints ===
     private Paint basePaint;
     private Paint handlePaint;
     private Paint centerDotPaint;
 
-    // Proportions
+    // === Geometry ===
     private float baseRadius;
     private float handleRadius;
-
-    // Positions
     private PointF center;
     private PointF handlePosition;
 
-    // Last handle displacement
+    // === Motion ===
     private float xPercent = 0f;
     private float yPercent = 0f;
     private OnMoveListener moveListener;
-
-
-    public JoystickView(Context context) {
-        super(context);
-        init();
-    }
-
-    public JoystickView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init();
-    }
-
-    private void init() {
-        // Create handle and base paint
-        basePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        basePaint.setColor(Color.GRAY);
-        basePaint.setStyle(Paint.Style.FILL);
-
-        handlePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        handlePaint.setColor(Color.GREEN);
-        handlePaint.setStyle(Paint.Style.FILL);
-
-        centerDotPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        centerDotPaint.setColor(Color.BLACK);
-        centerDotPaint.setStyle(Paint.Style.FILL);
-        centerDotPaint.setStrokeWidth(15f);
-
-        center = new PointF();
-        handlePosition = new PointF();
-    }
-
-    @Override
-    protected void onSizeChanged(int width, int height, int oldWidth, int oldHeight) {
-        // Adjust for new Sizes
-        center.set(width / 2f, height / 2f);
-        handlePosition.set(center.x, center.y);
-
-        baseRadius = Math.min(width, height) / 3f;
-        handleRadius = baseRadius / 3.5f;
-    }
 
     public interface OnMoveListener {
         void onMove(float xPercent, float yPercent);
@@ -78,50 +46,138 @@ public class JoystickView extends View {
         this.moveListener = listener;
     }
 
+    // === Constructors ===
+    public JoystickView(Context context) {
+        super(context);
+        init(context, null);
+    }
+
+    public JoystickView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        init(context, attrs);
+    }
+
+    public JoystickView(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        init(context, attrs);
+    }
+
+    private void init(Context context, AttributeSet attrs) {
+        // Default values
+        defaultSizePx = dpToPx(200);
+        baseColor = Color.GRAY;
+        handleColor = Color.GREEN;
+        centerDotColor = Color.BLACK;
+        baseRadiusRatio = 0.33f;       // base = 1/3 of view
+        handleRadiusRatio = 0.28f;     // handle = 28% of base
+
+        if (attrs != null) {
+            TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.JoystickView);
+            defaultSizePx = ta.getDimensionPixelSize(R.styleable.JoystickView_defaultSize, defaultSizePx);
+            baseColor = ta.getColor(R.styleable.JoystickView_baseColor, baseColor);
+            handleColor = ta.getColor(R.styleable.JoystickView_handleColor, handleColor);
+            centerDotColor = ta.getColor(R.styleable.JoystickView_centerDotColor, centerDotColor);
+            baseRadiusRatio = ta.getFloat(R.styleable.JoystickView_baseRadiusRatio, baseRadiusRatio);
+            handleRadiusRatio = ta.getFloat(R.styleable.JoystickView_handleRadiusRatio, handleRadiusRatio);
+            ta.recycle();
+        }
+
+        // Setup paints
+        basePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        basePaint.setColor(baseColor);
+        basePaint.setStyle(Paint.Style.FILL);
+
+        handlePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        handlePaint.setColor(handleColor);
+        handlePaint.setStyle(Paint.Style.FILL);
+
+        centerDotPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        centerDotPaint.setColor(centerDotColor);
+        centerDotPaint.setStyle(Paint.Style.FILL);
+        centerDotPaint.setStrokeWidth(15f);
+
+        center = new PointF();
+        handlePosition = new PointF();
+    }
+
+    private int dpToPx(int dp) {
+        return (int) (dp * getResources().getDisplayMetrics().density);
+    }
+
+    // === Measurement ===
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        int desiredSize = defaultSizePx;
+
+        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
+        int widthSize = MeasureSpec.getSize(widthMeasureSpec);
+        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
+        int heightSize = MeasureSpec.getSize(heightMeasureSpec);
+
+        int width, height;
+
+        if (widthMode == MeasureSpec.EXACTLY)
+            width = widthSize;
+        else if (widthMode == MeasureSpec.AT_MOST)
+            width = Math.min(desiredSize, widthSize);
+        else
+            width = desiredSize;
+
+        if (heightMode == MeasureSpec.EXACTLY)
+            height = heightSize;
+        else if (heightMode == MeasureSpec.AT_MOST)
+            height = Math.min(desiredSize, heightSize);
+        else
+            height = desiredSize;
+
+        int size = Math.min(width, height);
+        setMeasuredDimension(size, size);
+    }
+
+    // === Layout size changed ===
+    @Override
+    protected void onSizeChanged(int width, int height, int oldWidth, int oldHeight) {
+        super.onSizeChanged(width, height, oldWidth, oldHeight);
+        center.set(width / 2f, height / 2f);
+        handlePosition.set(center.x, center.y);
+
+        baseRadius = Math.min(width, height) * baseRadiusRatio;
+        handleRadius = baseRadius * handleRadiusRatio;
+    }
+
+    // === Drawing ===
     @Override
     protected void onDraw(Canvas canvas) {
-        // Draw elements of Joystick
         super.onDraw(canvas);
-
         canvas.drawCircle(center.x, center.y, baseRadius, basePaint);
         canvas.drawPoint(center.x, center.y, centerDotPaint);
         canvas.drawCircle(handlePosition.x, handlePosition.y, handleRadius, handlePaint);
     }
 
+    // === Touch handling ===
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        // Keep track of finger position
-        // x is tracked correctly | negative : left - positive : right
-        // y is inverse           |       up : left - positive : down
         float touchX = event.getX();
         float touchY = event.getY();
 
-        // x, y and center displacement
         float dx = touchX - center.x;
         float dy = touchY - center.y;
         float distance = (float) Math.sqrt(dx * dx + dy * dy);
 
         switch (event.getAction()) {
-            // Pressing and Moving
             case MotionEvent.ACTION_DOWN:
             case MotionEvent.ACTION_MOVE:
-                // Press inside circle?
                 if (distance < baseRadius) {
-                    // Adjust within circle
                     handlePosition.set(touchX, touchY);
                 } else {
-                    // Adjust outside circle
                     float ratio = baseRadius / distance;
-                    float constrainedX = center.x + dx * ratio;
-                    float constrainedY = center.y + dy * ratio;
-                    handlePosition.set(constrainedX, constrainedY);
+                    handlePosition.set(center.x + dx * ratio, center.y + dy * ratio);
                 }
 
-                // Set values to read from while onClick event
                 xPercent = (handlePosition.x - center.x) / baseRadius;
                 yPercent = (handlePosition.y - center.y) / baseRadius;
 
-                // Scale diagonals so corners are 0.5 instead of 1.0
+                // Normalize diagonals
                 float absX = Math.abs(xPercent);
                 float absY = Math.abs(yPercent);
                 float sum = absX + absY;
@@ -131,35 +187,23 @@ public class JoystickView extends View {
                     yPercent *= factor;
                 }
 
-                // Only trigger click if joystick is NOT centered
-                if (Math.abs(xPercent) > 0.025f || Math.abs(yPercent) > 0.025f) {
-
-                    // Trigger listener
-                    if (moveListener != null) {
-                        moveListener.onMove(xPercent, -1.0f * yPercent);
-                    }
+                if (moveListener != null) {
+                    moveListener.onMove(xPercent, -yPercent);
                 }
-
                 invalidate();
                 break;
 
-            // Aboarded or ended gesture
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
-                // Reset joystick to center and stop robot
                 handlePosition.set(center.x, center.y);
                 xPercent = 0f;
                 yPercent = 0f;
-
-                // Trigger listener
                 if (moveListener != null) {
-                    moveListener.onMove(0.0f, 0.0f);
+                    moveListener.onMove(0f, 0f);
                 }
-
                 invalidate();
                 break;
         }
-
         return true;
     }
 }

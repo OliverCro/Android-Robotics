@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -13,9 +14,11 @@ import androidx.fragment.app.Fragment;
 import com.hbrs.ORB.ORBManager;
 import com.hbrs.R;
 
-public class JoystickFragment extends Fragment {
+public class JoystickFragment extends Fragment implements SpeedUpdatable {
 
     private JoystickView joystickView;
+    private TextView tv_displacement;
+
     private int maxSpeed = 1000;
 
     @Nullable
@@ -26,6 +29,7 @@ public class JoystickFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_joystick, container, false);
 
         joystickView = view.findViewById(R.id.joystickView);
+        tv_displacement = view.findViewById(R.id.tv_displacement);
 
         if (joystickView != null) {
             joystickView.setOnMoveListener((x, y) -> {
@@ -36,12 +40,17 @@ public class JoystickFragment extends Fragment {
                 int rightMotor = (int) (rightSpeed * -maxSpeed);
 
                 ORBManager.move(String.format("Joy : X= %.3f Y= %.3f", x, y), leftMotor, rightMotor);
+
+                requireActivity().runOnUiThread(() ->
+                        tv_displacement.setText(String.format("X: %.3f | Y: %.3f", x, y))
+                );
             });
         }
 
         return view;
     }
 
+    @Override
     public void updateMaxSpeed(int speed) {
         this.maxSpeed = speed;
     }

@@ -1,7 +1,6 @@
 package com.hbrs.Views;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,9 +14,6 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
-import com.hbrs.MainActivity;
-import com.hbrs.ORB.ORB;
-import com.hbrs.ORB.ORBManager;
 import com.hbrs.R;
 
 public class ControlFragment extends Fragment {
@@ -43,14 +39,18 @@ public class ControlFragment extends Fragment {
 
         // Adapter Setup
         ViewPagerAdapter adapter = new ViewPagerAdapter(requireActivity());
+
+        // Add tabs with fragments
+        adapter.addFragment(new JoystickFragment(), "Joystick");
+        adapter.addFragment(new ButtonsFragment(), "Buttons");
+
         viewPager.setAdapter(adapter);
         viewPager.setUserInputEnabled(false);
 
         // Link TabLayout and ViewPager
-        new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
-            if (position == 0) tab.setText("Joystick");
-            else tab.setText("Buttons");
-        }).attach();
+        new TabLayoutMediator(tabLayout, viewPager,
+                (tab, position) -> { tab.setText(adapter.getTitle(position));}
+        ).attach();
 
         // Speed slider listener
         seekBarSpeed.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {

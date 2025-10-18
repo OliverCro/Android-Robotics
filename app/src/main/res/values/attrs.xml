@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Custom attributes for XML -->
+    <declare-styleable name="JoystickView">
+        <!-- Size -->
+        <attr name="defaultSize" format="dimension" />
+
+        <!-- Colors -->
+        <attr name="baseColor" format="color" />
+        <attr name="handleColor" format="color" />
+        <attr name="centerDotColor" format="color" />
+
+        <!-- Ratios (relative sizes between 0–1) -->
+        <attr name="baseRadiusRatio" format="float" />
+        <attr name="handleRadiusRatio" format="float" />
+    </declare-styleable>
+
+</resources>

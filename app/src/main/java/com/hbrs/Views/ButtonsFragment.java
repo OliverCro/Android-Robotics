@@ -14,7 +14,7 @@ import androidx.fragment.app.Fragment;
 import com.hbrs.ORB.ORBManager;
 import com.hbrs.R;
 
-public class ButtonsFragment extends Fragment {
+public class ButtonsFragment extends Fragment implements SpeedUpdatable {
     private int maxSpeed = 1000;
 
     @Nullable
@@ -40,6 +40,7 @@ public class ButtonsFragment extends Fragment {
         return view;
     }
 
+    @Override
     public void updateMaxSpeed(int speed) {
         this.maxSpeed = speed;
     }

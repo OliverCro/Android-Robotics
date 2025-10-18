@@ -1,37 +1,51 @@
 package com.hbrs.Views;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ViewPagerAdapter extends FragmentStateAdapter {
 
-    private int maxSpeed = 1000;
-    private JoystickFragment joystickFragment;
-    private ButtonsFragment buttonsFragment;
+    private final List<Fragment> fragmentList = new ArrayList<>();
+    private final List<String> fragmentTitles = new ArrayList<>();
 
     public ViewPagerAdapter(@NonNull FragmentActivity fragmentActivity) {
         super(fragmentActivity);
-        joystickFragment = new JoystickFragment();
-        buttonsFragment = new ButtonsFragment();
+    }
+
+    // Add a fragment and its title
+    public void addFragment(@NonNull Fragment fragment, @NonNull String title) {
+        fragmentList.add(fragment);
+        fragmentTitles.add(title);
     }
 
     @NonNull
     @Override
     public Fragment createFragment(int position) {
-        if (position == 0) return joystickFragment;
-        else return buttonsFragment;
+        return fragmentList.get(position);
     }
 
     @Override
     public int getItemCount() {
-        return 2;
+        return fragmentList.size();
     }
 
+    public String getTitle(int position) {
+        return fragmentTitles.get(position);
+    }
+
+    // Broadcast speed changes to all fragments
     public void setMaxSpeed(int speed) {
-        this.maxSpeed = speed;
-        joystickFragment.updateMaxSpeed(speed);
-        buttonsFragment.updateMaxSpeed(speed);
+        for (Fragment fragment : fragmentList) {
+            if (fragment instanceof SpeedUpdatable) {
+                ((SpeedUpdatable) fragment).updateMaxSpeed(speed);
+            }
+        }
     }
 }
