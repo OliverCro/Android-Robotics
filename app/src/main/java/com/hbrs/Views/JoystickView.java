@@ -38,6 +38,20 @@ public class JoystickView extends View {
     private float yPercent = 0f;
     private OnMoveListener moveListener;
 
+    // Reference angles (every 45°) and vectors
+    private static final float[] REF_ANGLES = {0, 45, 90, 135, 180, 225, 270, 315, 360};
+    private static final float[][] REF_VECTORS = {
+            {1f, 0f},
+            {0.5f, 0.5f},
+            {0f, 1f},
+            {-0.5f, 0.5f},
+            {-1f, 0f},
+            {-0.5f, -0.5f},
+            {0f, -1f},
+            {0.5f, -0.5f},
+            {1f, 0f}
+    };
+
     public interface OnMoveListener {
         void onMove(float xPercent, float yPercent);
     }
@@ -162,48 +176,60 @@ public class JoystickView extends View {
 
         float dx = touchX - center.x;
         float dy = touchY - center.y;
-        float distance = (float) Math.sqrt(dx * dx + dy * dy);
+        float distance = (float) Math.hypot(dx, dy); // same as sqrt(dx²+dy²), more readable
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
             case MotionEvent.ACTION_MOVE:
-                if (distance < baseRadius) {
-                    handlePosition.set(touchX, touchY);
-                } else {
-                    float ratio = baseRadius / distance;
-                    handlePosition.set(center.x + dx * ratio, center.y + dy * ratio);
+                // Keep handle within joystick base
+                float clampedDistance = Math.min(distance, baseRadius);
+                float ratio = clampedDistance / (distance == 0 ? 1 : distance); // avoid div by zero
+                handlePosition.set(center.x + dx * ratio, center.y + dy * ratio);
+
+                // Calculate angle (0° = right, counterclockwise positive)
+                float angle = (float) Math.toDegrees(Math.atan2(dy, dx));
+                if (angle < 0) angle += 360f;
+
+                // Find surrounding reference angles
+                int indexREF = 0;
+                for (; indexREF < REF_ANGLES.length - 1; indexREF++) {
+                    if (angle <= REF_ANGLES[indexREF + 1]) {
+                        break;
+                    }
                 }
 
-                xPercent = (handlePosition.x - center.x) / baseRadius;
-                yPercent = (handlePosition.y - center.y) / baseRadius;
+                // Linear interpolation between reference vectors
+                float t = (angle - REF_ANGLES[indexREF]) / (REF_ANGLES[indexREF + 1] - REF_ANGLES[indexREF]);
+                float[] startVec = REF_VECTORS[indexREF];
+                float[] endVec = REF_VECTORS[indexREF + 1];
 
-                // Normalize diagonals
-                float absX = Math.abs(xPercent);
-                float absY = Math.abs(yPercent);
-                float sum = absX + absY;
-                if (sum > 1f) {
-                    float factor = 1f / sum;
-                    xPercent *= factor;
-                    yPercent *= factor;
-                }
+                xPercent = (startVec[0] + t * (endVec[0] - startVec[0])) * (clampedDistance / baseRadius);
+                yPercent = (startVec[1] + t * (endVec[1] - startVec[1])) * (clampedDistance / baseRadius);
 
+                // Notify listener
                 if (moveListener != null) {
                     moveListener.onMove(xPercent, -yPercent);
                 }
+
                 invalidate();
                 break;
 
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
+                // Reset to center and notify
                 handlePosition.set(center.x, center.y);
                 xPercent = 0f;
                 yPercent = 0f;
+
+                // Notify listener
                 if (moveListener != null) {
                     moveListener.onMove(0f, 0f);
                 }
                 invalidate();
                 break;
         }
+
         return true;
     }
+
 }
