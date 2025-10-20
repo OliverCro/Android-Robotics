@@ -17,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"
-            app:baseRadiusRatio="0.45"
+            app:baseRadiusRatio="0.4"
             app:handleRadiusRatio="0.1"
             />
 
