@@ -171,15 +171,14 @@ public class JoystickView extends View {
     // === Touch handling ===
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        
-        float dx = event.getX() - center.x;
-        float dy = event.getY() - center.y;
+        float touchX = event.getX();
+        float touchY = event.getY();
+
+        float dx = touchX - center.x;
+        float dy = touchY - center.y;
         float distance = (float) Math.hypot(dx, dy); // same as sqrt(dx²+dy²), more readable
 
         switch (event.getAction()) {
-
-            // ACTION_DOWN -> A pressed gesture has started
-            // ACTION_MOVE -> A change has happened during a press gesture
             case MotionEvent.ACTION_DOWN:
             case MotionEvent.ACTION_MOVE:
                 // Keep handle within joystick base
@@ -215,8 +214,6 @@ public class JoystickView extends View {
                 invalidate();
                 break;
 
-            // ACTION_UP     -> A pressed gesture has finished
-            // ACTION_CANCEL -> he current gesture has been aborted
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
                 // Reset to center and notify
