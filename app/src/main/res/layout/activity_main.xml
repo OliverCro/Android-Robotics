@@ -22,7 +22,7 @@
             android:background="?attr/colorPrimary"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-        <!-- Where your fragments or content appear -->
+        <!-- Where fragments or content appear -->
         <FrameLayout
             android:id="@+id/content_frame"
             android:layout_width="match_parent"

@@ -1,7 +1,6 @@
 package com.hbrs.Views;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +15,7 @@ import com.hbrs.R;
 
 public class JoystickFragment extends Fragment implements SpeedUpdatable {
 
-    private JoystickView joystickView;
+    private JoystickView jv_movement;
     private TextView tv_displacement;
 
     private int maxSpeed = 1000;
@@ -28,11 +27,11 @@ public class JoystickFragment extends Fragment implements SpeedUpdatable {
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_joystick, container, false);
 
-        joystickView = view.findViewById(R.id.joystickView);
+        jv_movement = view.findViewById(R.id.jv_movement);
         tv_displacement = view.findViewById(R.id.tv_displacement);
 
-        if (joystickView != null) {
-            joystickView.setOnMoveListener((x, y) -> {
+        if (jv_movement != null) {
+            jv_movement.setOnMoveListener((x, y) -> {
                 float leftSpeed = y + x;
                 float rightSpeed = y - x;
 
