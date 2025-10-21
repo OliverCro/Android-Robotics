@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -36,6 +37,11 @@ public class JoystickView extends View {
     // === Motion ===
     private float xPercent = 0f;
     private float yPercent = 0f;
+
+    private Handler holdHandler = new Handler();
+    private boolean isHolding = false;
+    private final int HOLD_INTERVAL_MS = 100; // interval for repeated calls
+
     private OnMoveListener moveListener;
 
     // Reference angles (every 45°) and vectors
@@ -58,6 +64,25 @@ public class JoystickView extends View {
 
     public void setOnMoveListener(OnMoveListener listener) {
         this.moveListener = listener;
+    }
+
+    private final Runnable holdRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (isHolding && moveListener != null) {
+                moveListener.onMove(xPercent, -yPercent);
+                holdHandler.postDelayed(this, HOLD_INTERVAL_MS);
+            }
+        }
+    };
+
+    private void startHoldRunnable() {
+        holdHandler.removeCallbacks(holdRunnable);
+        holdHandler.postDelayed(holdRunnable, HOLD_INTERVAL_MS);
+    }
+
+    private void stopHoldRunnable() {
+        holdHandler.removeCallbacks(holdRunnable);
     }
 
     // === Constructors ===
@@ -182,6 +207,10 @@ public class JoystickView extends View {
             // ACTION_MOVE -> A change has happened during a press gesture
             case MotionEvent.ACTION_DOWN:
             case MotionEvent.ACTION_MOVE:
+                // Start repeated updates
+                isHolding = true;
+                startHoldRunnable();
+
                 // Keep handle within joystick base
                 float clampedDistance = Math.min(distance, baseRadius);
                 float ratio = clampedDistance / (distance == 0 ? 1 : distance); // avoid div by zero
@@ -207,11 +236,6 @@ public class JoystickView extends View {
                 xPercent = (startVec[0] + t * (endVec[0] - startVec[0])) * (clampedDistance / baseRadius);
                 yPercent = (startVec[1] + t * (endVec[1] - startVec[1])) * (clampedDistance / baseRadius);
 
-                // Notify listener
-                if (moveListener != null) {
-                    moveListener.onMove(xPercent, -yPercent);
-                }
-
                 invalidate();
                 break;
 
@@ -219,19 +243,22 @@ public class JoystickView extends View {
             // ACTION_CANCEL -> he current gesture has been aborted
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
+                // Stop repeated calls
+                isHolding = false;
+                stopHoldRunnable();
+
                 // Reset to center and notify
                 handlePosition.set(center.x, center.y);
                 xPercent = 0f;
                 yPercent = 0f;
-
-                // Notify listener
-                if (moveListener != null) {
-                    moveListener.onMove(0f, 0f);
-                }
-                invalidate();
                 break;
         }
 
+        // Notify listener
+        if(moveListener != null) {
+            moveListener.onMove(xPercent, -yPercent);
+        }
+        invalidate();
         return true;
     }
 
