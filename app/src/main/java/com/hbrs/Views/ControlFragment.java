@@ -21,7 +21,7 @@ public class ControlFragment extends Fragment {
     private SeekBar seekBarSpeed;
     private TextView tvMaxSpeed;
 
-    private int maxSpeed = 1000; // Default
+    private int maxSpeed = 5000; // Default
 
     @Nullable
     @Override
@@ -66,6 +66,9 @@ public class ControlFragment extends Fragment {
             @Override public void onStartTrackingTouch(SeekBar seekBar) {}
             @Override public void onStopTrackingTouch(SeekBar seekBar) {}
         });
+
+        // Set initial max speed
+        adapter.setMaxSpeed(maxSpeed);
 
         return view;
     }

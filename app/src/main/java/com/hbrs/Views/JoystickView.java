@@ -70,7 +70,7 @@ public class JoystickView extends View {
         @Override
         public void run() {
             if (isHolding && moveListener != null) {
-                moveListener.onMove(xPercent, -yPercent);
+                moveListener.onMove(xPercent, yPercent);
                 holdHandler.postDelayed(this, HOLD_INTERVAL_MS);
             }
         }
@@ -217,7 +217,8 @@ public class JoystickView extends View {
                 handlePosition.set(center.x + dx * ratio, center.y + dy * ratio);
 
                 // Calculate angle (0° = right, counterclockwise positive)
-                float angle = (float) Math.toDegrees(Math.atan2(dy, dx));
+                // Invert dy because up is negative and down is positive
+                float angle = (float) Math.toDegrees(Math.atan2(-1* dy, dx));
                 if (angle < 0) angle += 360f;
 
                 // Find surrounding reference angles
@@ -236,7 +237,6 @@ public class JoystickView extends View {
                 xPercent = (startVec[0] + t * (endVec[0] - startVec[0])) * (clampedDistance / baseRadius);
                 yPercent = (startVec[1] + t * (endVec[1] - startVec[1])) * (clampedDistance / baseRadius);
 
-                invalidate();
                 break;
 
             // ACTION_UP     -> A pressed gesture has finished
@@ -256,7 +256,7 @@ public class JoystickView extends View {
 
         // Notify listener
         if(moveListener != null) {
-            moveListener.onMove(xPercent, -yPercent);
+            moveListener.onMove(xPercent, yPercent);
         }
         invalidate();
         return true;

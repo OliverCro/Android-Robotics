@@ -31,10 +31,10 @@ public class ButtonsFragment extends Fragment implements SpeedUpdatable {
         Button btnStop = view.findViewById(R.id.btn_stop);
 
         // Set click listeners
-        btnForward.setOnClickListener(v -> ORBManager.move("Btn: Forward", maxSpeed, -maxSpeed));
-        btnBackward.setOnClickListener(v -> ORBManager.move("Btn: Backward", -maxSpeed, maxSpeed));
-        btnLeft.setOnClickListener(v -> ORBManager.move("Btn: Left", -maxSpeed, -maxSpeed));
-        btnRight.setOnClickListener(v -> ORBManager.move("Btn: Right", +maxSpeed, +maxSpeed));
+        btnForward.setOnClickListener(v -> ORBManager.move("Btn: Forward", -maxSpeed, +maxSpeed));
+        btnBackward.setOnClickListener(v -> ORBManager.move("Btn: Backward", maxSpeed, -maxSpeed));
+        btnLeft.setOnClickListener(v -> ORBManager.move("Btn: Left", maxSpeed, maxSpeed));
+        btnRight.setOnClickListener(v -> ORBManager.move("Btn: Right", -maxSpeed, -maxSpeed));
         btnStop.setOnClickListener(v -> ORBManager.move("Btn: Stop", 0, 0));
 
         return view;
