@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -19,6 +20,7 @@ import com.google.android.material.navigation.NavigationView;
 import com.hbrs.Bluetooth.BT_DeviceListActivity;
 import com.hbrs.ORB.ORB;
 import com.hbrs.ORB.ORBManager;
+import com.hbrs.Utils.ButtonStateHelper;
 import com.hbrs.Views.CameraFragment;
 import com.hbrs.Views.HomeFragment;
 import com.hbrs.Views.ControlFragment;
@@ -37,7 +39,8 @@ public class MainActivity extends AppCompatActivity
         DISCONNECTED,
         CONNECTING,
         CONNECTED,
-        FAILED
+        FAILED,
+        NOPERMISSION
     }
 
     @Override
@@ -142,21 +145,41 @@ public class MainActivity extends AppCompatActivity
                         Log.i("Test",BT_DeviceListActivity.getDeviceFromIntent(data).toString());
                         setConnectionState(ConnectionState.CONNECTING);
 
-                        try {
-                            orb.openBT(BT_DeviceListActivity.getDeviceFromIntent(data));
-                            setConnectionState(ConnectionState.CONNECTED);
-                            ORBManager.ConfigureMotors();
-                        } catch(Exception e) {
-                            setConnectionState(ConnectionState.FAILED);
-                        }
+                        orb.openBT(BT_DeviceListActivity.getDeviceFromIntent(data), new ORB.ConnectionCallback() {
+                            @Override
+                            public void onSuccess() {
+                                runOnUiThread(() -> {
+                                    setConnectionState(ConnectionState.CONNECTED);
+                                    Log.i("Test", "Connection established");
+                                    Toast.makeText(MainActivity.this, "Connected", Toast.LENGTH_SHORT).show();
+                                    ORBManager.ConfigureMotors();
+                                });
+                            }
+
+                            @Override
+                            public void onFailure(Exception e) {
+                                runOnUiThread(() -> {
+                                    setConnectionState(ConnectionState.FAILED);
+                                    Log.i("Test", "Connection Failed");
+                                    Toast.makeText(MainActivity.this, "Failed connection", Toast.LENGTH_SHORT).show();
+                                });
+                            }
+                        });
+
                         break;
 
                     case BT_DeviceListActivity.RESULT_CANCELED:
                         Log.i("Test","canceled");
                         setConnectionState(ConnectionState.DISCONNECTED);
                         break;
+
+                    case BT_DeviceListActivity.RESULT_NOPERMISSION:
+                        Log.i("Test", "No Bluetooth permission");
+                        setConnectionState(ConnectionState.NOPERMISSION);
+                        break;
+
                     default:
-                        Log.i("Test", "Enable permissons first");
+                        Log.i("Test", "No match in result code");
                         setConnectionState(ConnectionState.FAILED);
                         break;
                 }
@@ -167,27 +190,8 @@ public class MainActivity extends AppCompatActivity
     public void setConnectionState(ConnectionState newState) {
         connectionState = newState;
 
-        // Update drawer button
-        if (drawerConnectBtn != null) {
-            switch (newState) {
-                case DISCONNECTED:
-                    drawerConnectBtn.setText("Connect");
-                    drawerConnectBtn.setEnabled(true);
-                    break;
-                case CONNECTING:
-                    drawerConnectBtn.setText("Connecting...");
-                    drawerConnectBtn.setEnabled(false);
-                    break;
-                case CONNECTED:
-                    drawerConnectBtn.setText("Disconnect");
-                    drawerConnectBtn.setEnabled(true);
-                    break;
-                case FAILED:
-                    drawerConnectBtn.setText("Failed - Try Again");
-                    drawerConnectBtn.setEnabled(true);
-                    break;
-            }
-        }
+        // Update drawer Button
+        ButtonStateHelper.updateButton(drawerConnectBtn, newState);
 
         // Update HomeFragment button if visible
         Fragment currentFragment = getSupportFragmentManager()

@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment;
 
 import com.hbrs.MainActivity;
 import com.hbrs.R;
+import com.hbrs.Utils.ButtonStateHelper;
 
 public class HomeFragment extends Fragment {
 
@@ -39,25 +40,6 @@ public class HomeFragment extends Fragment {
     }
 
     public void updateButtonState(MainActivity.ConnectionState state) {
-        if (connectBtn == null) return;
-
-        switch (state) {
-            case DISCONNECTED:
-                connectBtn.setText("Connect");
-                connectBtn.setEnabled(true);
-                break;
-            case CONNECTING:
-                connectBtn.setText("Connecting...");
-                connectBtn.setEnabled(false);
-                break;
-            case CONNECTED:
-                connectBtn.setText("Disconnect");
-                connectBtn.setEnabled(true);
-                break;
-            case FAILED:
-                connectBtn.setText("Failed — Try Again");
-                connectBtn.setEnabled(true);
-                break;
-        }
+        ButtonStateHelper.updateButton(connectBtn, state);
     }
 }

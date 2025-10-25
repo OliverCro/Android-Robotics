@@ -69,14 +69,34 @@ public class ORB extends ORB_RemoteHandler implements Runnable
     }
 
     //-----------------------------------------------------------------
-    public void openBT( BluetoothDevice BT_Device )
+    // Custom callback for connection
+    public interface ConnectionCallback {
+        void onSuccess();
+        void onFailure(Exception e);
+    }
+
+    //-----------------------------------------------------------------
+    // Edited to use callback
+    public void openBT( BluetoothDevice BT_Device, ConnectionCallback callback )
     {
         if( BT_Device != null ) {
-            orb_BT.open(BT_Device);
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-            }
+            new Thread(() -> {
+               try {
+                   orb_BT.open(BT_Device);
+
+                   // Wait short amount of time
+                   Thread.sleep(500);
+                   if (orb_BT.isConnected()) {
+                       callback.onSuccess();
+                   } else {
+                       callback.onFailure(new Exception("unable to connect"));
+                   }
+               } catch (Exception e) {
+                   callback.onFailure(e);
+               }
+            }).start();
+        } else {
+            callback.onFailure(new Exception("Device is null"));
         }
     }
 
