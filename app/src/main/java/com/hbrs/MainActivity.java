@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity
         CONNECTING,
         CONNECTED,
         FAILED,
-        PERMISSION
+        NOPERMISSION
     }
 
     @Override
@@ -59,7 +59,8 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = findViewById(R.id.nav_view);
         View headerView = navigationView.getHeaderView(0);
         drawerConnectBtn = headerView.findViewById(R.id.btn_connect);
-        drawerConnectBtn.setOnClickListener(this::OnClickConnect);
+        drawerConnectBtn.setOnClickListener(v -> OnClickConnect(v));
+
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawerLayout, toolbar,
@@ -174,7 +175,7 @@ public class MainActivity extends AppCompatActivity
 
                     case BT_DeviceListActivity.RESULT_NOPERMISSION:
                         Log.i("Test", "No Bluetooth permission");
-                        setConnectionState(ConnectionState.PERMISSION);
+                        setConnectionState(ConnectionState.NOPERMISSION);
                         break;
 
                     default:

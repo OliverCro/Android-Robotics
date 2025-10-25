@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <integer name="Speed_MIN">1000</integer>
-    <integer name="Speed_MAX">5000</integer>
-    <integer name="Speed_START">3000</integer>
-</resources>

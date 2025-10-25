@@ -2,7 +2,6 @@ package com.hbrs.Utils;
 
 import android.widget.Button;
 import com.hbrs.MainActivity;
-import com.hbrs.R;
 
 public class ButtonStateHelper {
 
@@ -11,23 +10,23 @@ public class ButtonStateHelper {
 
         switch (state) {
             case DISCONNECTED:
-                button.setText(R.string.Connection_Connect);
+                button.setText("Connect");
                 button.setEnabled(true);
                 break;
             case CONNECTING:
-                button.setText(R.string.Connection_Connecting);
+                button.setText("Connecting...");
                 button.setEnabled(false);
                 break;
             case CONNECTED:
-                button.setText(R.string.Connection_Disconnect);
+                button.setText("Disconnect");
                 button.setEnabled(true);
                 break;
             case FAILED:
-                button.setText(R.string.Connection_Failed);
+                button.setText("Failed — Try Again");
                 button.setEnabled(true);
                 break;
-            case PERMISSION:
-                button.setText(R.string.Connection_Permission);
+            case NOPERMISSION:
+                button.setText("No BT-Permission");
                 button.setEnabled(true);
                 break;
         }

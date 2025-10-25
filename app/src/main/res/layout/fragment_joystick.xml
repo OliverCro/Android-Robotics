@@ -1,28 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
-    android:orientation="vertical"
     android:backgroundTint="@color/material_dynamic_primary100">
 
-    <com.hbrs.Views.JoystickView
-        android:id="@+id/jv_movement"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center"
-        app:handleColor="?attr/colorPrimary"
-        app:baseRadiusRatio="0.4"
-        app:handleRadiusRatio="0.1"
-        />
+        android:gravity="center"
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/tv_displacement"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="@string/displacement"/>
+        <com.hbrs.Views.JoystickView
+            android:id="@+id/jv_movement"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            app:handleColor="?attr/colorPrimary"
+            app:baseRadiusRatio="0.4"
+            app:handleRadiusRatio="0.1"
+            />
 
+        <TextView
+            android:id="@+id/tv_displacement"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Displacement"/>
 
-</LinearLayout>
+    </LinearLayout>
+
+</FrameLayout>

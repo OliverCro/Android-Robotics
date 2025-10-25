@@ -27,7 +27,9 @@ public class HomeFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         connectBtn = view.findViewById(R.id.btn_connect);
 
-        connectBtn.setOnClickListener(v -> ((MainActivity) requireActivity()).OnClickConnect(v));
+        connectBtn.setOnClickListener(v -> {
+            ((MainActivity) requireActivity()).OnClickConnect(v);
+        });
 
         // Sync initial state
         ((MainActivity) requireActivity()).setConnectionState(

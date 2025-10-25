@@ -26,7 +26,7 @@
         android:layout_margin="8dp"
         android:backgroundTint="@color/white"
         android:padding="12dp"
-        android:text="@string/Connection_Connect"
+        android:text="Connect"
         android:textColor="@color/orange" />
 
 </LinearLayout>
