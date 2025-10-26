@@ -20,8 +20,10 @@ public class ControlFragment extends Fragment {
 
     private SeekBar seekBarSpeed;
     private TextView tvMaxSpeed;
+    private TextView tvMinSpeed;
+    private TextView tvCurrentSpeed;
 
-    private int maxSpeed = 5000; // Default
+    private int currentSpeed; // Default
 
     @Nullable
     @Override
@@ -32,10 +34,17 @@ public class ControlFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_control, container, false);
 
         // Get instances
+        tvMinSpeed = view.findViewById(R.id.tv_min_speed);
+        tvCurrentSpeed = view.findViewById(R.id.tv_current_speed);
         tvMaxSpeed = view.findViewById(R.id.tv_max_speed);
         seekBarSpeed = view.findViewById(R.id.seekbar_speed);
         TabLayout tabLayout = view.findViewById(R.id.tabLayout);
         ViewPager2 viewPager = view.findViewById(R.id.viewPager);
+
+        // Set initial Min, Max and current Speed strings
+        tvMaxSpeed.setText(String.format("%,d", getResources().getInteger(R.integer.Speed_MAX)));
+        tvMinSpeed.setText(String.format("%,d", getResources().getInteger(R.integer.Speed_MIN)));
+        currentSpeed = getResources().getInteger(R.integer.Speed_START);
 
         // Adapter Setup
         ViewPagerAdapter adapter = new ViewPagerAdapter(requireActivity());
@@ -56,19 +65,20 @@ public class ControlFragment extends Fragment {
         seekBarSpeed.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                maxSpeed = progress;
-                tvMaxSpeed.setText("Max speed: " + maxSpeed);
+                currentSpeed = progress;
+                tvCurrentSpeed.setText("Max speed: " + String.format("%,d", currentSpeed));
 
                 // Notify fragments about speed change
-                adapter.setMaxSpeed(maxSpeed);
+                adapter.setMaxSpeed(currentSpeed);
             }
 
             @Override public void onStartTrackingTouch(SeekBar seekBar) {}
             @Override public void onStopTrackingTouch(SeekBar seekBar) {}
         });
 
-        // Set initial max speed
-        adapter.setMaxSpeed(maxSpeed);
+        // Set initial current speed
+        adapter.setMaxSpeed(currentSpeed);
+        tvCurrentSpeed.setText("Max speed: " + String.format("%,d", currentSpeed));
 
         return view;
     }
