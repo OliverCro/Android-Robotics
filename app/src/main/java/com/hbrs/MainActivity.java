@@ -25,6 +25,8 @@ import com.hbrs.Views.CameraFragment;
 import com.hbrs.Views.HomeFragment;
 import com.hbrs.Views.ControlFragment;
 
+import java.security.Permission;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -117,6 +119,7 @@ public class MainActivity extends AppCompatActivity
         switch (connectionState) {
             case DISCONNECTED:
             case FAILED:
+            case PERMISSION:
                 setConnectionState(ConnectionState.CONNECTING);
                 isConnectingIntentActive = true;
                 OnClickConnect(drawerConnectBtn);
@@ -124,8 +127,7 @@ public class MainActivity extends AppCompatActivity
 
             case CONNECTED:
                 // Disconnect from ORB
-                orb.close();
-
+                orb.closeBT();
                 setConnectionState(ConnectionState.DISCONNECTED);
                 break;
 

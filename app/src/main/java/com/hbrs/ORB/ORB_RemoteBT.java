@@ -1,6 +1,5 @@
 package com.hbrs.ORB;
 
-import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.util.Log;
@@ -9,7 +8,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.UUID;
 
 //*******************************************************************
@@ -32,7 +30,7 @@ public class ORB_RemoteBT extends ORB_Remote
     //---------------------------------------------------------------
     public void open( BluetoothDevice BT_Device )
     {
-        close();
+        //close();
 
         try
         {
@@ -46,6 +44,7 @@ public class ORB_RemoteBT extends ORB_Remote
         }
         catch(IOException e)
         {
+            Log.e("ORB_BT", "open failed with error: " + e.getMessage());
             isConnected = false;
         }
     }
@@ -78,7 +77,6 @@ public class ORB_RemoteBT extends ORB_Remote
         return( isConnected );
     }
 
-    //---------------------------------------------------------------
 
     //---------------------------------------------------------------
     private void updateOut() {
@@ -237,7 +235,7 @@ public class ORB_RemoteBT extends ORB_Remote
     private BluetoothSocket BT_Socket;
     private OutputStream    BT_OutStream;
     private InputStream     BT_InStream;
-    private boolean         isConnected = false;
+    private volatile boolean isConnected = false;
 
     //---------------------------------------------------------------
     private ByteBuffer bufferIN;
