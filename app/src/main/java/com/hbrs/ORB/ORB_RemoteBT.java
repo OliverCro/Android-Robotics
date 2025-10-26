@@ -68,6 +68,7 @@ public class ORB_RemoteBT extends ORB_Remote
         }
         catch( IOException e )
         {
+            Log.e("ORB_BT", "close failed: " + e.getMessage());
         }
     }
 
@@ -136,8 +137,11 @@ public class ORB_RemoteBT extends ORB_Remote
             BT_OutStream.write(data,0,len);
             BT_OutStream.flush();
         }
-        catch( IOException e )
+        catch( IOException e ) // ORB turned off -> Exception when output stream is closed
         {
+            Log.e("ORB_BT", "write failed with Exception: " + e.getMessage());
+            isConnected = false;
+            close();
         }
     }
 

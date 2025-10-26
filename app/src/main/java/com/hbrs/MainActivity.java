@@ -51,6 +51,11 @@ public class MainActivity extends AppCompatActivity
         // Create an orb
         orb = ORBManager.getInstance(this);
 
+        orb.setLostConnectionListener(() -> runOnUiThread(() -> {
+            setConnectionState(ConnectionState.DISCONNECTED);
+            Toast.makeText(this, "Connection Lost!", Toast.LENGTH_SHORT).show();
+        }));
+
         // Toolbar + Drawer setup
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

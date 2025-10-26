@@ -44,6 +44,10 @@ public class ORB extends ORB_RemoteHandler implements Runnable
     boolean runMainThread = false;
 
     //---------------------------------------------------------------
+    private LostConnectionListener lostConnectionListener;
+    private boolean wasConnected = false;
+
+    //---------------------------------------------------------------
     public ORB( Activity parent )
     {
         orb_USB = new ORB_RemoteUSB(this);
@@ -69,10 +73,20 @@ public class ORB extends ORB_RemoteHandler implements Runnable
     }
 
     //-----------------------------------------------------------------
-    // Custom callback for connection
+    // --- Connection Callback ---
     public interface ConnectionCallback {
         void onSuccess();
         void onFailure(Exception e);
+    }
+
+    //-----------------------------------------------------------------
+    // Lost Connection Listener
+    public interface LostConnectionListener {
+        void onConnectionLost();
+    }
+
+    public void setLostConnectionListener(LostConnectionListener listener) {
+        this.lostConnectionListener = listener;
     }
 
     //-----------------------------------------------------------------
@@ -87,6 +101,7 @@ public class ORB extends ORB_RemoteHandler implements Runnable
                    // Wait short amount of time
                    Thread.sleep(500);
                    if (orb_BT.isConnected()) {
+                       runMainThread = true;
                        callback.onSuccess();
                    } else {
                        callback.onFailure(new Exception("unable to connect"));
@@ -120,13 +135,18 @@ public class ORB extends ORB_RemoteHandler implements Runnable
 
     //-----------------------------------------------------------------
     @Override
-    public
-    void run()
+    public void run()
     {
         int timeout=0;
 
         while ( runMainThread )
         {
+            boolean connected = orb_USB.isConnected() || orb_BT.isConnected();
+
+            if (connected) {
+                wasConnected = true;
+            }
+
             if( orb_USB.isConnected() )
             {
                 setORB_Remote(orb_USB);
@@ -141,23 +161,31 @@ public class ORB extends ORB_RemoteHandler implements Runnable
                // setMsgConnection(orb.settingsFromORB.getName());
                 timeout = 0;
             }
-            else
+            else if (wasConnected && !connected) // Check transition Connected -> Disconnected
             {
-                if( timeout < 1000)
-                    timeout++;
-                else {
+                timeout++;
+
+                // 1000 failed updated due to disconnect?
+                if( timeout > 100) {
                   //  setMsgConnection("NOT CONNECTED");
+                    if (lostConnectionListener != null) {
+                        lostConnectionListener.onConnectionLost();
+                    }
+                    wasConnected = false;
+                    timeout = 0;
                 }
             }
 
             //orb.monitorToORB.mode = 0;
 
+            // Check Connection in 10ms intervals
             try
             {
-                Thread.sleep(1);
+                Thread.sleep(10);
             }
-            catch (InterruptedException e)
+            catch (InterruptedException ignored)
             {
+
             }
         }
     }
