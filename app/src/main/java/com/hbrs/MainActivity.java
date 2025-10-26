@@ -23,9 +23,7 @@ import com.hbrs.ORB.ORBManager;
 import com.hbrs.Utils.ButtonStateHelper;
 import com.hbrs.Views.CameraFragment;
 import com.hbrs.Views.HomeFragment;
-import com.hbrs.Views.ControlFragment;
-
-import java.security.Permission;
+import com.hbrs.Views.AnalogControlFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -93,7 +91,7 @@ public class MainActivity extends AppCompatActivity
             // Create JoystickFragment and set to contentFrame
             getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.content_frame, new ControlFragment())
+                    .replace(R.id.content_frame, new AnalogControlFragment())
                     .commit();
         } else if (id == R.id.nav_camera) {
             // Create CameraFragment and set to contentFrame

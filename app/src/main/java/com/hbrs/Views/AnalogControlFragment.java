@@ -16,7 +16,7 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.hbrs.R;
 
-public class ControlFragment extends Fragment {
+public class AnalogControlFragment extends Fragment {
 
     private SeekBar seekBarSpeed;
     private TextView tvMaxSpeed;
@@ -31,7 +31,7 @@ public class ControlFragment extends Fragment {
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_control, container, false);
+        View view = inflater.inflate(R.layout.fragment_analog_control, container, false);
 
         // Get instances
         tvMinSpeed = view.findViewById(R.id.tv_min_speed);
