@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity
 
             case CONNECTED:
                 // Disconnect from ORB
-                orb.closeBT();
+                orb.close();
                 setConnectionState(ConnectionState.DISCONNECTED);
                 break;
 

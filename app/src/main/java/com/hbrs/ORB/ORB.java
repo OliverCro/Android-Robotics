@@ -130,11 +130,6 @@ public class ORB extends ORB_RemoteHandler implements Runnable
         runMainThread = false;
     }
 
-    public void closeBT() {
-        userInitiatedClose = true;
-        orb_BT.close();
-    }
-
 
     //-----------------------------------------------------------------
     public String getDeviceName()
