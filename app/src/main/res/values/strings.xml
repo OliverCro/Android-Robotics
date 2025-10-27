@@ -21,6 +21,8 @@
     <string name="Connection_Failed">Failed - Try Again!</string>
     <string name="Connection_Permission">No BT-Permissions</string>
     <string name="Connection_Disconnect">Disconnect</string>
+    <string name="Connection_BT_Off">Turn on Bluetooth</string>
+    <string name="Connection_BT_NO_Support">Bluetooth not supported</string>
 
     <!-- Joystick - Text -->
     <string name="displacement">Displacement</string>

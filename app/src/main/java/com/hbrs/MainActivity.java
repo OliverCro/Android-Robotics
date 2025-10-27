@@ -40,7 +40,9 @@ public class MainActivity extends AppCompatActivity
         CONNECTING,
         CONNECTED,
         FAILED,
-        PERMISSION
+        PERMISSION,
+        BT_OFF,
+        BT_NOT_SUPPORTED
     }
 
     @Override
@@ -115,6 +117,8 @@ public class MainActivity extends AppCompatActivity
         }
 
         switch (connectionState) {
+            case BT_OFF:
+            case BT_NOT_SUPPORTED:
             case DISCONNECTED:
             case FAILED:
             case PERMISSION:
@@ -145,6 +149,24 @@ public class MainActivity extends AppCompatActivity
 
                 switch(resultCode)
                 {
+                    case BT_DeviceListActivity.RESULT_DEVICE_NO_BT:
+                        Log.i("Test","Device doesn't support Bluetooth");
+                        Toast.makeText(MainActivity.this, "Device doesn't support Bluetooth", Toast.LENGTH_SHORT).show();
+                        setConnectionState(ConnectionState.BT_NOT_SUPPORTED);
+                        break;
+
+                    case BT_DeviceListActivity.RESULT_NOPERMISSION:
+                        Log.i("Test", "No Bluetooth permission");
+                        Toast.makeText(MainActivity.this, "No Bluetooth permission", Toast.LENGTH_SHORT).show();
+                        setConnectionState(ConnectionState.PERMISSION);
+                        break;
+
+                    case BT_DeviceListActivity.RESULT_BTOFF:
+                        Log.i("Test","Bluetooth is turned off");
+                        Toast.makeText(MainActivity.this, "Turn on Bluetooth", Toast.LENGTH_SHORT).show();
+                        setConnectionState(ConnectionState.BT_OFF);
+                        break;
+
                     case BT_DeviceListActivity.RESULT_OK:
                         Log.i("Test",BT_DeviceListActivity.getDeviceFromIntent(data).toString());
                         setConnectionState(ConnectionState.CONNECTING);
@@ -169,17 +191,11 @@ public class MainActivity extends AppCompatActivity
                                 });
                             }
                         });
-
                         break;
 
                     case BT_DeviceListActivity.RESULT_CANCELED:
                         Log.i("Test","canceled");
                         setConnectionState(ConnectionState.DISCONNECTED);
-                        break;
-
-                    case BT_DeviceListActivity.RESULT_NOPERMISSION:
-                        Log.i("Test", "No Bluetooth permission");
-                        setConnectionState(ConnectionState.PERMISSION);
                         break;
 
                     default:

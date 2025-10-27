@@ -9,22 +9,15 @@ package com.hbrs.Bluetooth;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.ActivityManager;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
-
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-
 import com.hbrs.R;
 
 import java.util.ArrayList;
@@ -34,9 +27,17 @@ import java.util.Set;
 public class BT_DeviceListActivity extends Activity
 {
     static Activity parent;
-    //public static final int RESULT_OK = Activity.RESULT_OK;
-    //public static final int RESULT_CANCELED = Activity.RESULT_CANCELED;
+
+    // Custom RESULT_CODES
     public static final int RESULT_NOPERMISSION = Activity.RESULT_FIRST_USER;
+    public static final int RESULT_BTOFF = Activity.RESULT_FIRST_USER + 1;
+    public static final int RESULT_DEVICE_NO_BT = Activity.RESULT_FIRST_USER + 2;
+
+    public static String EXTRA_DEVICE_ADDRESS = "device_address";
+
+    BluetoothAdapter BT_Adapter;
+    Set<BluetoothDevice> BT_PairedDevices;
+    BluetoothDevice BT_Device;
 
     public static void  start(Activity _parent, int requestCode)
     {
@@ -46,19 +47,12 @@ public class BT_DeviceListActivity extends Activity
         parent.startActivityForResult(serverIntent, requestCode);
     }
 
-    public static BluetoothDevice getDeviceFromIntent(Intent data)
-    {
-
-            BluetoothDevice BT_Device;
-            String addr = data.getExtras().getString(BT_DeviceListActivity.EXTRA_DEVICE_ADDRESS);
-
-            if (addr.length() > 0) {
-                BT_Device = BluetoothAdapter.getDefaultAdapter().getRemoteDevice(addr);
-                //orb.openBT(BT_Device);
-                return( BT_Device );
-            }
-
-        return( null );
+    public static BluetoothDevice getDeviceFromIntent(Intent data) {
+        String addr = data.getExtras().getString(BT_DeviceListActivity.EXTRA_DEVICE_ADDRESS);
+        if (addr != null && addr.length() > 0) {
+            return BluetoothAdapter.getDefaultAdapter().getRemoteDevice(addr);
+        }
+        return null;
     }
 
     //---------------------------------------------------------------
@@ -67,7 +61,9 @@ public class BT_DeviceListActivity extends Activity
     {
         super.onCreate(savedInstanceState);
 
-        if (ActivityCompat.checkSelfPermission(parent, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+        // Check if app is allowed to use Bluetooth
+        if (ActivityCompat.checkSelfPermission(parent, Manifest.permission.BLUETOOTH_CONNECT)
+                != PackageManager.PERMISSION_GRANTED) {
 
             // Create the result Intent and include the MAC address
             Intent intent = new Intent();
@@ -78,6 +74,30 @@ public class BT_DeviceListActivity extends Activity
             finish();
             return;
         }
+
+        // BT is allowed
+        BT_Adapter = BluetoothAdapter.getDefaultAdapter();
+
+        // Check if Bluetooth is supported
+        if (BT_Adapter == null) {
+
+            Intent intent = new Intent();
+            intent.putExtra(EXTRA_DEVICE_ADDRESS, "");
+            setResult(RESULT_DEVICE_NO_BT, intent);
+            finish();
+            return;
+        }
+
+        // Check if Bluetooth is enabled
+        if (!BT_Adapter.isEnabled()) {
+
+            Intent intent = new Intent();
+            intent.putExtra(EXTRA_DEVICE_ADDRESS, "");
+            setResult(RESULT_BTOFF, intent);
+            finish();
+            return;
+        }
+
         setContentView(R.layout.device_list);
         createDeviceList();
     }
@@ -94,16 +114,8 @@ public class BT_DeviceListActivity extends Activity
     {
         //-----------------------------------------------------------
         @Override
-        public void onItemClick(AdapterView<?> arg0, View arg1, int pos, long id)
-        {
-            //setStatus("onItemClick:"+pos);
-
-            BT_Device = (BluetoothDevice)BT_PairedDevices.toArray()[pos];
-            //close();
-            //open( BT_Device);
-
-
-            // Create the result Intent and include the MAC address
+        public void onItemClick(AdapterView<?> arg0, android.view.View arg1, int pos, long id) {
+            BT_Device = (BluetoothDevice) BT_PairedDevices.toArray()[pos];
             Intent intent = new Intent();
             intent.putExtra(EXTRA_DEVICE_ADDRESS, BT_Device.getAddress());
 
@@ -137,10 +149,4 @@ public class BT_DeviceListActivity extends Activity
         lv.setAdapter(adapter);
         lv.setOnItemClickListener( new myOnItemClickListener() );
     }
-
-    BluetoothAdapter     BT_Adapter;
-    Set<BluetoothDevice> BT_PairedDevices;
-    BluetoothDevice      BT_Device;
-
-    public static String EXTRA_DEVICE_ADDRESS = "device_address";
 }

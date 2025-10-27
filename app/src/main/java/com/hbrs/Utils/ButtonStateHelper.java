@@ -30,6 +30,15 @@ public class ButtonStateHelper {
                 button.setText(R.string.Connection_Permission);
                 button.setEnabled(true);
                 break;
+            case BT_OFF:
+                button.setText(R.string.Connection_BT_Off);
+                button.setEnabled(true);
+                break;
+            case BT_NOT_SUPPORTED:
+                button.setText(R.string.Connection_BT_NO_Support);
+                button.setEnabled(true);
+                break;
+
         }
     }
 }
