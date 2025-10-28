@@ -52,6 +52,7 @@ public class AnalogControlFragment extends Fragment {
         // Add tabs with fragments
         adapter.addFragment(new JoystickFragment(), "Joystick");
         adapter.addFragment(new ButtonsFragment(), "Buttons");
+        adapter.addFragment(new GyroFragment(), "Gyro");
 
         viewPager.setAdapter(adapter);
         viewPager.setUserInputEnabled(false);

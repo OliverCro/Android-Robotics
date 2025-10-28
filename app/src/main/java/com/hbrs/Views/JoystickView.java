@@ -113,7 +113,7 @@ public class JoystickView extends View {
         if (attrs != null) {
             TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.JoystickView);
             defaultSizePx = ta.getDimensionPixelSize(R.styleable.JoystickView_defaultSize, defaultSizePx);
-            baseColor = ta.getColor(R.styleable.JoystickView_baseColor, baseColor);
+            baseColor = ta.getColor(R.styleable.JoystickView_JoystickBaseColor, baseColor);
             handleColor = ta.getColor(R.styleable.JoystickView_handleColor, handleColor);
             centerDotColor = ta.getColor(R.styleable.JoystickView_centerDotColor, centerDotColor);
             baseRadiusRatio = ta.getFloat(R.styleable.JoystickView_baseRadiusRatio, baseRadiusRatio);

@@ -7,13 +7,23 @@
         <attr name="defaultSize" format="dimension" />
 
         <!-- Colors -->
-        <attr name="baseColor" format="color" />
+        <attr name="JoystickBaseColor" format="color" />
         <attr name="handleColor" format="color" />
         <attr name="centerDotColor" format="color" />
 
         <!-- Ratios (relative sizes between 0–1) -->
         <attr name="baseRadiusRatio" format="float" />
         <attr name="handleRadiusRatio" format="float" />
+    </declare-styleable>
+
+    <declare-styleable name="GyroView">
+        <attr name="gyroBaseColor" format="color" />
+        <attr name="knobColor" format="color" />
+        <attr name="gyroCenterDotColor" format="color"/>
+        <attr name="textColor" format="color" />
+        <attr name="baseStrokeWidth" format="dimension" />
+        <attr name="knobRadiusRatio" format="float" />
+        <attr name="maxPitchDisplacementRatio" format="float" />
     </declare-styleable>
 
 </resources>
