@@ -31,14 +31,14 @@ public class GyroFragment extends Fragment implements SpeedUpdatable{
 
         gyroView.start();
         if (gyroView != null) {
-            gyroView.setOnTiltChangeListener((x, y) -> {
+            gyroView.setOnControlMoveListener((x, y) -> {
                 float leftSpeed = y + x;
                 float rightSpeed = y - x;
 
                 int leftMotor = (int) (leftSpeed * -maxSpeed);
                 int rightMotor = (int) (rightSpeed * +maxSpeed);
 
-                ORBManager.move(String.format("Joy : X= %.3f Y= %.3f", x, y), leftMotor, rightMotor);
+                ORBManager.move(String.format("Gyro : X= %.3f Y= %.3f", x, y), leftMotor, rightMotor);
 
                 requireActivity().runOnUiThread(() ->
                         tv_displacement.setText(String.format("X: %.3f | Y: %.3f", x, y))

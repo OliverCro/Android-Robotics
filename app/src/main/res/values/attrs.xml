@@ -2,28 +2,24 @@
 <resources>
 
     <!-- Custom attributes for XML -->
-    <declare-styleable name="JoystickView">
-        <!-- Size -->
-        <attr name="defaultSize" format="dimension" />
-
-        <!-- Colors -->
-        <attr name="JoystickBaseColor" format="color" />
-        <attr name="handleColor" format="color" />
-        <attr name="centerDotColor" format="color" />
-
-        <!-- Ratios (relative sizes between 0–1) -->
-        <attr name="baseRadiusRatio" format="float" />
+    <!-- BaseControl attributes-->
+    <declare-styleable name="BaseControlView">
+        <attr name="defaultSize" format="dimension"/>
+        <attr name="baseColor" format="color"/>
+        <attr name="handleColor" format="color"/>
+        <attr name="centerDotColor" format="color"/>
+        <attr name="baseRadiusRatio" format="float"/>
         <attr name="handleRadiusRatio" format="float" />
     </declare-styleable>
 
+    <!-- Attributes extending Base for Joystick -->
+    <declare-styleable name="JoystickView">
+    </declare-styleable>
+
+    <!-- Attributes extending Base for Gyro -->
     <declare-styleable name="GyroView">
-        <attr name="gyroBaseColor" format="color" />
-        <attr name="knobColor" format="color" />
-        <attr name="gyroCenterDotColor" format="color"/>
-        <attr name="textColor" format="color" />
-        <attr name="baseStrokeWidth" format="dimension" />
-        <attr name="knobRadiusRatio" format="float" />
-        <attr name="maxPitchDisplacementRatio" format="float" />
+        <attr name="deadZoneRatio" format="float" />
+        <attr name="deadZoneColor" format="color" />
     </declare-styleable>
 
 </resources>

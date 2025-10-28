@@ -14,7 +14,7 @@
         android:layout_gravity="center"
         app:handleColor="?attr/colorPrimary"
         app:baseRadiusRatio="0.4"
-        app:handleRadiusRatio="0.1"
+        app:handleRadiusRatio="0.12"
         />
 
     <TextView
@@ -23,6 +23,5 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="@string/displacement"/>
-
 
 </LinearLayout>

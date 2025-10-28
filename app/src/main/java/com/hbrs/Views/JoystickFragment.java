@@ -18,7 +18,7 @@ public class JoystickFragment extends Fragment implements SpeedUpdatable {
     private JoystickView jv_movement;
     private TextView tv_displacement;
 
-    private int maxSpeed = 1000;
+    private int maxSpeed;
 
     @Nullable
     @Override
@@ -30,8 +30,10 @@ public class JoystickFragment extends Fragment implements SpeedUpdatable {
         jv_movement = view.findViewById(R.id.jv_movement);
         tv_displacement = view.findViewById(R.id.tv_displacement);
 
+        maxSpeed = getResources().getInteger(R.integer.Speed_START);
+
         if (jv_movement != null) {
-            jv_movement.setOnMoveListener((x, y) -> {
+            jv_movement.setOnControlMoveListener((x, y) -> {
                 float leftSpeed = y + x;
                 float rightSpeed = y - x;
 
