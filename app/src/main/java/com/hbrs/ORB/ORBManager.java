@@ -14,6 +14,7 @@ public class ORBManager {
         return orb;
     }
 
+    // TODO: Beide werte positiv geradeaus
     public static void move(String source, int leftMotor, int rightMotor) {
         if(orb == null) {
             Log.i("Test", "Orb is NULL!");
@@ -23,7 +24,7 @@ public class ORBManager {
         orb.setMotor(ORB.M1, ORB.SPEED_MODE, leftMotor, 0);
         orb.setMotor(ORB.M4, ORB.SPEED_MODE, rightMotor, 0);
 
-        Log.i("Test", String.format("%s | LM: %d RM: %d", source, leftMotor, rightMotor));
+        Log.i("Test", String.format("%s | LM: %d RM: %d", source, -leftMotor, rightMotor));
     }
 
     public static void ConfigureMotors() {
