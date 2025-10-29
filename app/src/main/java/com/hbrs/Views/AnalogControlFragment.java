@@ -62,6 +62,23 @@ public class AnalogControlFragment extends Fragment {
                 (tab, position) -> { tab.setText(adapter.getTitle(position));}
         ).attach();
 
+        // Inform Fragments when they are visible or not
+        viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                for (int i = 0; i < adapter.getItemCount(); i++) {
+                    Fragment fragment = adapter.getFragmentAt(i);
+                    if (fragment instanceof FragmentVisibilityListener) {
+                        if (i == position)
+                            ((FragmentVisibilityListener) fragment).onVisible();
+                        else
+                            ((FragmentVisibilityListener) fragment).onHidden();
+                    }
+                }
+            }
+        });
+
         // Speed slider listener
         seekBarSpeed.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override

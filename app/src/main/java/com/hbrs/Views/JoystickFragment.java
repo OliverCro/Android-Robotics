@@ -37,8 +37,8 @@ public class JoystickFragment extends Fragment implements SpeedUpdatable {
                 float leftSpeed = y + x;
                 float rightSpeed = y - x;
 
-                int leftMotor = (int) (leftSpeed * -maxSpeed);
-                int rightMotor = (int) (rightSpeed * +maxSpeed);
+                int leftMotor = (int) (leftSpeed * maxSpeed);
+                int rightMotor = (int) (rightSpeed * maxSpeed);
 
                 ORBManager.move(String.format("Joy : X= %.3f Y= %.3f", x, y), leftMotor, rightMotor);
 

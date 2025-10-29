@@ -36,6 +36,10 @@ public class ViewPagerAdapter extends FragmentStateAdapter {
         return fragmentList.size();
     }
 
+    public Fragment getFragmentAt(int position) {
+        return fragmentList.get(position);
+    }
+
     public String getTitle(int position) {
         return fragmentTitles.get(position);
     }

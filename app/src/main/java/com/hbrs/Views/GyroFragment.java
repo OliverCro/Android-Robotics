@@ -1,6 +1,7 @@
 package com.hbrs.Views;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +14,7 @@ import androidx.fragment.app.Fragment;
 import com.hbrs.ORB.ORBManager;
 import com.hbrs.R;
 
-public class GyroFragment extends Fragment implements SpeedUpdatable{
+public class GyroFragment extends Fragment implements SpeedUpdatable, FragmentVisibilityListener {
 
     private int maxSpeed;
     private GyroView gyroView;
@@ -26,17 +27,24 @@ public class GyroFragment extends Fragment implements SpeedUpdatable{
 
         maxSpeed = getResources().getInteger(R.integer.Speed_START);
 
+        // Get elements from view
         tv_displacement = view.findViewById(R.id.tv_displacement);
         gyroView = view.findViewById(R.id.gyroView);
 
         gyroView.start();
-        if (gyroView != null) {
+
+        return view;
+    }
+
+    @Override
+    public void onVisible() {
+        if(gyroView != null) {
             gyroView.setOnControlMoveListener((x, y) -> {
                 float leftSpeed = y + x;
                 float rightSpeed = y - x;
 
-                int leftMotor = (int) (leftSpeed * -maxSpeed);
-                int rightMotor = (int) (rightSpeed * +maxSpeed);
+                int leftMotor = (int) (leftSpeed * maxSpeed);
+                int rightMotor = (int) (rightSpeed * maxSpeed);
 
                 ORBManager.move(String.format("Gyro : X= %.3f Y= %.3f", x, y), leftMotor, rightMotor);
 
@@ -45,20 +53,18 @@ public class GyroFragment extends Fragment implements SpeedUpdatable{
                 );
             });
         }
-
-        return view;
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        gyroView.start();
+    public void onHidden() {
+        if(gyroView != null) {
+            gyroView.setOnControlMoveListener(null);
+        }
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
-        gyroView.stop();
+    public void onDestroy() {;
+        super.onDestroy();
     }
 
     @Override

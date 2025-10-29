@@ -130,6 +130,10 @@ public class ORB extends ORB_RemoteHandler implements Runnable
         runMainThread = false;
     }
 
+    //-----------------------------------------------------------------
+    public boolean isConnected() {
+        return orb_BT.isConnected() || orb_USB.isConnected();
+    }
 
     //-----------------------------------------------------------------
     public String getDeviceName()
