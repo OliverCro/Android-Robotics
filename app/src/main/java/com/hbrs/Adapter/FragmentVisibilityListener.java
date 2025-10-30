@@ -1,4 +1,4 @@
-package com.hbrs.Views;
+package com.hbrs.Adapter;
 
 public interface FragmentVisibilityListener {
     void onVisible();

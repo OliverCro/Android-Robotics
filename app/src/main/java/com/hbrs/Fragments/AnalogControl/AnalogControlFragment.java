@@ -1,4 +1,4 @@
-package com.hbrs.Views;
+package com.hbrs.Fragments.AnalogControl;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -15,6 +15,8 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.hbrs.R;
+import com.hbrs.Adapter.FragmentVisibilityListener;
+import com.hbrs.Adapter.ViewPagerAdapter;
 
 public class AnalogControlFragment extends Fragment {
 

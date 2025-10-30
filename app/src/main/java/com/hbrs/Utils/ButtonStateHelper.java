@@ -1,7 +1,7 @@
 package com.hbrs.Utils;
 
 import android.widget.Button;
-import com.hbrs.MainActivity;
+import com.hbrs.Activities.MainActivity;
 import com.hbrs.R;
 
 public class ButtonStateHelper {

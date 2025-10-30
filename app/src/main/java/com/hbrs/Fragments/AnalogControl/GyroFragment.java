@@ -1,7 +1,6 @@
-package com.hbrs.Views;
+package com.hbrs.Fragments.AnalogControl;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +12,8 @@ import androidx.fragment.app.Fragment;
 
 import com.hbrs.ORB.ORBManager;
 import com.hbrs.R;
+import com.hbrs.Adapter.FragmentVisibilityListener;
+import com.hbrs.Views.GyroView;
 
 public class GyroFragment extends Fragment implements SpeedUpdatable, FragmentVisibilityListener {
 

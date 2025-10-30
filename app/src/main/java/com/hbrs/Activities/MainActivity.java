@@ -1,4 +1,4 @@
-package com.hbrs;
+package com.hbrs.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -20,10 +20,11 @@ import com.google.android.material.navigation.NavigationView;
 import com.hbrs.Bluetooth.BT_DeviceListActivity;
 import com.hbrs.ORB.ORB;
 import com.hbrs.ORB.ORBManager;
+import com.hbrs.R;
 import com.hbrs.Utils.ButtonStateHelper;
-import com.hbrs.Views.CameraFragment;
-import com.hbrs.Views.HomeFragment;
-import com.hbrs.Views.AnalogControlFragment;
+import com.hbrs.Fragments.CameraControl.CameraFragment;
+import com.hbrs.Fragments.HomeFragment;
+import com.hbrs.Fragments.AnalogControl.AnalogControlFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {

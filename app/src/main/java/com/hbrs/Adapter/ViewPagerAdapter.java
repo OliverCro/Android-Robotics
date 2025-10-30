@@ -1,11 +1,11 @@
-package com.hbrs.Views;
-
-import android.util.Log;
+package com.hbrs.Adapter;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
+
+import com.hbrs.Fragments.AnalogControl.SpeedUpdatable;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -2,7 +2,7 @@ package com.hbrs.ORB;
 
 import android.util.Log;
 
-import com.hbrs.MainActivity;
+import com.hbrs.Activities.MainActivity;
 
 public class ORBManager {
     private static ORB orb;

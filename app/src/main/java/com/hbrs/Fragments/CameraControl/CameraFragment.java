@@ -1,4 +1,4 @@
-package com.hbrs.Views;
+package com.hbrs.Fragments.CameraControl;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

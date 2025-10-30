@@ -1,4 +1,4 @@
-package com.hbrs.Views;
+package com.hbrs.Fragments.AnalogControl;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment;
 
 import com.hbrs.ORB.ORBManager;
 import com.hbrs.R;
+import com.hbrs.Views.JoystickView;
 
 public class JoystickFragment extends Fragment implements SpeedUpdatable {
 
