@@ -24,7 +24,7 @@ import com.hbrs.ORB.ORB;
 import com.hbrs.ORB.ORBManager;
 import com.hbrs.R;
 import com.hbrs.Utils.ButtonStateHelper;
-import com.hbrs.Fragments.CameraControl.CameraFragment;
+import com.hbrs.Fragments.CameraControl.CameraControlFragment;
 import com.hbrs.Fragments.HomeFragment;
 import com.hbrs.Fragments.AnalogControl.AnalogControlFragment;
 
@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity
             // Create CameraFragment and set to contentFrame
             getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.content_frame, new CameraFragment())
+                    .replace(R.id.content_frame, new CameraControlFragment())
                     .commit();
         }
 
