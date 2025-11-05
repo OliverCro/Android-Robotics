@@ -76,7 +76,6 @@ public class CameraController {
 
                 preview = new Preview.Builder().build();
                 imageAnalysis = new ImageAnalysis.Builder()
-                        .setTargetResolution(new Size(9 * 40, 20 * 40))
                         .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                         .build();
 

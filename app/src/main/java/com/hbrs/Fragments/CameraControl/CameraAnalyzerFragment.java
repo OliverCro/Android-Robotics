@@ -80,7 +80,7 @@ public class CameraAnalyzerFragment extends Fragment {
                         CameraController.getInstance().setAnalyzer(analyzer);
                         break;
                     case 3:
-                        analyzer = new RedAnalyzer();
+                        analyzer = new RedAnalyzer(requireActivity());
                         analyzer.setListener(bitmap -> imageView.post(() -> imageView.setImageBitmap(bitmap)));
                         CameraController.getInstance().setAnalyzer(analyzer);
                         break;
