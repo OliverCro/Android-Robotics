@@ -10,11 +10,10 @@ import androidx.annotation.Nullable;
 import androidx.camera.view.PreviewView;
 import androidx.fragment.app.Fragment;
 
-import com.hbrs.Adapter.FragmentVisibilityListener;
 import com.hbrs.ImageAnalyzer.CameraController;
 import com.hbrs.R;
 
-public class BasicCameraFragment extends Fragment implements FragmentVisibilityListener {
+public class BasicCameraFragment extends Fragment {
 
     PreviewView preview;
 
@@ -29,14 +28,18 @@ public class BasicCameraFragment extends Fragment implements FragmentVisibilityL
     }
 
     @Override
-    public void onVisible() {
+    public void onResume() {
+        super.onResume();
+
         if (preview != null) {
             CameraController.getInstance().registerPreview(preview);
         }
     }
 
     @Override
-    public void onHidden() {
+    public void onPause() {
+        super.onPause();
+
         if (preview != null) {
             CameraController.getInstance().unregisterPreview(preview);
         }

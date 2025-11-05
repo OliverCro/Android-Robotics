@@ -14,7 +14,6 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.hbrs.ImageAnalyzer.CameraController;
 import com.hbrs.R;
-import com.hbrs.Adapter.FragmentVisibilityListener;
 import com.hbrs.Adapter.ViewPagerAdapter;
 
 public class CameraControlFragment extends Fragment {
@@ -46,23 +45,6 @@ public class CameraControlFragment extends Fragment {
         new TabLayoutMediator(tabLayout, viewPager,
                 (tab, position) -> { tab.setText(adapter.getTitle(position));}
         ).attach();
-
-        // Inform Fragments when they are visible or not
-        viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
-            @Override
-            public void onPageSelected(int position) {
-                super.onPageSelected(position);
-                for (int i = 0; i < adapter.getItemCount(); i++) {
-                    Fragment fragment = adapter.getFragmentAt(i);
-                    if (fragment instanceof FragmentVisibilityListener) {
-                        if (i == position)
-                            ((FragmentVisibilityListener) fragment).onVisible();
-                        else
-                            ((FragmentVisibilityListener) fragment).onHidden();
-                    }
-                }
-            }
-        });
 
         return view;
     }

@@ -13,7 +13,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.hbrs.Adapter.FragmentVisibilityListener;
 import com.hbrs.ImageAnalyzer.CameraController;
 import com.hbrs.ImageAnalyzer.GrayscaleAnalyzer;
 import com.hbrs.ImageAnalyzer.InvertAnalyzer;
@@ -26,7 +25,7 @@ import com.hbrs.ImageAnalyzer.PassThroughAnalyzer;
  *
  * - The analyzed result is displayed in an ImageView.
  */
-public class CameraAnalyzerFragment extends Fragment implements FragmentVisibilityListener {
+public class CameraAnalyzerFragment extends Fragment {
 
     private ImageView imageView;
     private Spinner analyzerSpinner;
@@ -92,8 +91,11 @@ public class CameraAnalyzerFragment extends Fragment implements FragmentVisibili
     }
 
     @Override
-    public void onVisible() {
+    public void onResume() {
         // Create modular Analyzer to use
+        super.onResume();
+
+        // TODO: Set Spinner on whatever it was bevor the Stop
         ModularAnalyzer analyzer = new PassThroughAnalyzer();
         analyzer.setListener(bitmap -> imageView.post(() -> imageView.setImageBitmap(bitmap)));
 
@@ -102,7 +104,9 @@ public class CameraAnalyzerFragment extends Fragment implements FragmentVisibili
     }
 
     @Override
-    public void onHidden() {
+    public void onPause() {
+        super.onPause();
+
         CameraController.getInstance().setAnalyzer(null);
     }
 
