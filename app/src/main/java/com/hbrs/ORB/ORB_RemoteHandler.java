@@ -80,15 +80,15 @@ public class ORB_RemoteHandler
             size = configToORB.fill(data);
             configToORB.isNew = false;
         }
-        else if( propToORB.isNew ) {
+        else //if( propToORB.isNew )
+        {
             Log.d("ORB","propToORB");
             size = propToORB.fill(data);
             propToORB.isNew = false;
         }
-        else
-        {
-            size = monitorToORB.fill( data );
-        }
+        //else{
+        //size = monitorToORB.fill( data );
+        //}
         return( size );
     }
 

@@ -227,6 +227,7 @@ public class ORB_RemoteBT extends ORB_Remote
             updateOut();
             updateCnt = 0;
         }
+
         return( ret );
     }
 

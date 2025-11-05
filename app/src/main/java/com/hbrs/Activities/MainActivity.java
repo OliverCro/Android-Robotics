@@ -1,6 +1,7 @@
 package com.hbrs.Activities;
 
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -185,7 +186,7 @@ public class MainActivity extends AppCompatActivity
                                     setConnectionState(ConnectionState.CONNECTED);
                                     Log.i("Test", "Connection established");
                                     Toast.makeText(MainActivity.this, "Connected", Toast.LENGTH_SHORT).show();
-                                    ORBManager.ConfigureMotors();
+                                    ORBManager.Configure();
                                 });
                             }
 

@@ -14,6 +14,7 @@ import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.usb.UsbManager;
+import android.util.Log;
 
 //*******************************************************************
 public class ORB extends ORB_RemoteHandler implements Runnable
