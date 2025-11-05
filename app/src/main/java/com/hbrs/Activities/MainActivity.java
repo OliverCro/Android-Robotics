@@ -20,6 +20,7 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.navigation.NavigationView;
 import com.hbrs.Bluetooth.BT_DeviceListActivity;
+import com.hbrs.ImageAnalyzer.CameraController;
 import com.hbrs.ORB.ORB;
 import com.hbrs.ORB.ORBManager;
 import com.hbrs.R;
@@ -52,7 +53,9 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         hideSystemUI();
+        CameraController.getInstance().init(this,this);
 
         // Create an orb
         orb = ORBManager.getInstance(this);

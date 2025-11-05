@@ -18,6 +18,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.RemoteControl"
         android:enableOnBackInvokedCallback="true">
+
+        <profileable android:shell="true" />
+
         <activity
             android:name=".Activities.MainActivity"
             android:screenOrientation="portrait"

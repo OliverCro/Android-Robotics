@@ -12,6 +12,7 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+import com.hbrs.ImageAnalyzer.CameraController;
 import com.hbrs.R;
 import com.hbrs.Adapter.FragmentVisibilityListener;
 import com.hbrs.Adapter.ViewPagerAdapter;
@@ -34,6 +35,7 @@ public class CameraControlFragment extends Fragment {
         ViewPagerAdapter adapter = new ViewPagerAdapter(requireActivity());
 
         // Add tabs with fragments
+        adapter.addFragment(new CameraAnalyzerFragment(), "Analyzer");
         adapter.addFragment(new BasicCameraFragment(), "Camera");
 
         viewPager.setAdapter(adapter);
@@ -68,5 +70,16 @@ public class CameraControlFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        CameraController.getInstance().stopCamera();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
     }
 }
