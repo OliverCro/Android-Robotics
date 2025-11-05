@@ -20,11 +20,12 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.navigation.NavigationView;
 import com.hbrs.Bluetooth.BT_DeviceListActivity;
+import com.hbrs.ImageAnalyzer.CameraController;
 import com.hbrs.ORB.ORB;
 import com.hbrs.ORB.ORBManager;
 import com.hbrs.R;
 import com.hbrs.Utils.ButtonStateHelper;
-import com.hbrs.Fragments.CameraControl.CameraFragment;
+import com.hbrs.Fragments.CameraControl.CameraControlFragment;
 import com.hbrs.Fragments.HomeFragment;
 import com.hbrs.Fragments.AnalogControl.AnalogControlFragment;
 
@@ -52,7 +53,9 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         hideSystemUI();
+        CameraController.getInstance().init(this,this);
 
         // Create an orb
         orb = ORBManager.getInstance(this);
@@ -103,7 +106,7 @@ public class MainActivity extends AppCompatActivity
             // Create CameraFragment and set to contentFrame
             getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.content_frame, new CameraFragment())
+                    .replace(R.id.content_frame, new CameraControlFragment())
                     .commit();
         }
 

@@ -26,4 +26,10 @@
 
     <!-- Joystick - Text -->
     <string name="displacement">Displacement</string>
+
+    <string-array name="analyzer_Array">
+        <item>Mercury</item>
+        <item>Venus</item>
+        <item>Earth</item>
+    </string-array>
 </resources>

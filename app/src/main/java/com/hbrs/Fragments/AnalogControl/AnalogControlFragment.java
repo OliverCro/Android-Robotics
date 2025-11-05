@@ -15,7 +15,6 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.hbrs.R;
-import com.hbrs.Adapter.FragmentVisibilityListener;
 import com.hbrs.Adapter.ViewPagerAdapter;
 
 public class AnalogControlFragment extends Fragment {
@@ -40,8 +39,8 @@ public class AnalogControlFragment extends Fragment {
         tvCurrentSpeed = view.findViewById(R.id.tv_current_speed);
         tvMaxSpeed = view.findViewById(R.id.tv_max_speed);
         seekBarSpeed = view.findViewById(R.id.seekbar_speed);
-        TabLayout tabLayout = view.findViewById(R.id.tabLayout);
-        ViewPager2 viewPager = view.findViewById(R.id.viewPager);
+        TabLayout tabLayout = view.findViewById(R.id.tl_analog_control);
+        ViewPager2 viewPager = view.findViewById(R.id.vp_analog_control);
 
         // Set initial Min, Max and current Speed strings
         tvMaxSpeed.setText(String.format("%,d", getResources().getInteger(R.integer.Speed_MAX)));
@@ -63,23 +62,6 @@ public class AnalogControlFragment extends Fragment {
         new TabLayoutMediator(tabLayout, viewPager,
                 (tab, position) -> { tab.setText(adapter.getTitle(position));}
         ).attach();
-
-        // Inform Fragments when they are visible or not
-        viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
-            @Override
-            public void onPageSelected(int position) {
-                super.onPageSelected(position);
-                for (int i = 0; i < adapter.getItemCount(); i++) {
-                    Fragment fragment = adapter.getFragmentAt(i);
-                    if (fragment instanceof FragmentVisibilityListener) {
-                        if (i == position)
-                            ((FragmentVisibilityListener) fragment).onVisible();
-                        else
-                            ((FragmentVisibilityListener) fragment).onHidden();
-                    }
-                }
-            }
-        });
 
         // Speed slider listener
         seekBarSpeed.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {

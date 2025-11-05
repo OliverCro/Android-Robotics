@@ -6,17 +6,17 @@
 
     <!-- Tabs at the top -->
     <com.google.android.material.tabs.TabLayout
-        android:id="@+id/tabLayout"
+        android:id="@+id/tl_analog_control"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent" />
 
     <!-- ViewPager for switching between Tab content -->
     <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/viewPager"
+        android:id="@+id/vp_analog_control"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/tabLayout"
+        app:layout_constraintTop_toBottomOf="@id/tl_analog_control"
         app:layout_constraintBottom_toTopOf="@id/speed_container" />
 
     <!-- Bottom speed controls -->

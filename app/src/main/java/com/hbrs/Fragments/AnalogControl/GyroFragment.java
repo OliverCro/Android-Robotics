@@ -12,10 +12,9 @@ import androidx.fragment.app.Fragment;
 
 import com.hbrs.ORB.ORBManager;
 import com.hbrs.R;
-import com.hbrs.Adapter.FragmentVisibilityListener;
 import com.hbrs.Views.GyroView;
 
-public class GyroFragment extends Fragment implements SpeedUpdatable, FragmentVisibilityListener {
+public class GyroFragment extends Fragment implements SpeedUpdatable {
 
     private int maxSpeed;
     private GyroView gyroView;
@@ -38,7 +37,9 @@ public class GyroFragment extends Fragment implements SpeedUpdatable, FragmentVi
     }
 
     @Override
-    public void onVisible() {
+    public void onResume() {
+        super.onResume();
+
         if(gyroView != null) {
             gyroView.setOnControlMoveListener((x, y) -> {
                 float leftSpeed = y + x;
@@ -57,7 +58,9 @@ public class GyroFragment extends Fragment implements SpeedUpdatable, FragmentVi
     }
 
     @Override
-    public void onHidden() {
+    public void onPause() {
+        super.onPause();
+
         if(gyroView != null) {
             gyroView.setOnControlMoveListener(null);
         }
