@@ -14,6 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.hbrs.ImageAnalyzer.CameraController;
+import com.hbrs.ImageAnalyzer.ColorIsolationAnalyzer;
 import com.hbrs.ImageAnalyzer.GrayscaleAnalyzer;
 import com.hbrs.ImageAnalyzer.InvertAnalyzer;
 import com.hbrs.R;
@@ -44,7 +45,7 @@ public class CameraAnalyzerFragment extends Fragment {
         analyzerSpinner = view.findViewById(R.id.analyzer_spinner);
 
         // Create options for spinner
-        String[] options = {"Passthrough", "Grayscale", "Inverted Colors"};
+        String[] options = {"Passthrough", "Grayscale", "Inverted Colors", "Color Isolation"};
 
         // Create ArrayAdapter
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
@@ -75,6 +76,11 @@ public class CameraAnalyzerFragment extends Fragment {
                         break;
                     case 2:
                         analyzer = new InvertAnalyzer();
+                        analyzer.setListener(bitmap -> imageView.post(() -> imageView.setImageBitmap(bitmap)));
+                        CameraController.getInstance().setAnalyzer(analyzer);
+                        break;
+                    case 3:
+                        analyzer = new ColorIsolationAnalyzer();
                         analyzer.setListener(bitmap -> imageView.post(() -> imageView.setImageBitmap(bitmap)));
                         CameraController.getInstance().setAnalyzer(analyzer);
                         break;
