@@ -152,6 +152,7 @@ public class RedAnalyzer extends ModularAnalyzer {
             canvas.drawRect(rect, paint);
         }
 
+
         return bitmap;
     }
 }
