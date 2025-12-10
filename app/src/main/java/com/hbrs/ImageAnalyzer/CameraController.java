@@ -54,6 +54,10 @@ public class CameraController {
         return instance;
     }
 
+    public ModularAnalyzer getAnalyzer() {
+        return getInstance().modularAnalyzer;
+    }
+
     // ---------------------------------------------------------------------------------------------
     // Initialization
     // ---------------------------------------------------------------------------------------------

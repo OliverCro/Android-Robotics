@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Spinner;
 
@@ -17,6 +18,7 @@ import com.hbrs.ImageAnalyzer.CameraController;
 import com.hbrs.ImageAnalyzer.GrayscaleAnalyzer;
 import com.hbrs.ImageAnalyzer.InvertAnalyzer;
 import com.hbrs.ImageAnalyzer.RedAnalyzer;
+import com.hbrs.ORB.ORBManager;
 import com.hbrs.R;
 import com.hbrs.ImageAnalyzer.ModularAnalyzer;
 import com.hbrs.ImageAnalyzer.PassThroughAnalyzer;
@@ -28,8 +30,11 @@ import com.hbrs.ImageAnalyzer.PassThroughAnalyzer;
  */
 public class CameraAnalyzerFragment extends Fragment {
 
+    private CameraController cameraController = null;
     private ImageView imageView;
     private Spinner analyzerSpinner;
+    private ModularAnalyzer oldAnalyzer = null;
+    private Button toggleAnalyzer;
 
     @Nullable
     @Override
@@ -38,11 +43,16 @@ public class CameraAnalyzerFragment extends Fragment {
             @Nullable ViewGroup container,
             @Nullable Bundle savedInstanceState) {
 
+        cameraController = CameraController.getInstance();
+
         // Inflate the layout
         View view = inflater.inflate(R.layout.fragment_camera_analyzer, container, false);
 
         imageView = view.findViewById(R.id.analyzedImage);
         analyzerSpinner = view.findViewById(R.id.analyzer_spinner);
+        toggleAnalyzer = view.findViewById(R.id.toggle_filter);
+        toggleAnalyzer.setOnClickListener(this::OnStopClicked);
+
 
         // Create options for spinner
         String[] options = {"Passthrough", "Grayscale", "Inverted Colors", "Red Filter"};
@@ -62,29 +72,32 @@ public class CameraAnalyzerFragment extends Fragment {
         analyzerSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                ModularAnalyzer analyzer;
+                ModularAnalyzer analyzer = null;
+
                 switch (position) {
                     case 0:
                         analyzer = new PassThroughAnalyzer();
                         analyzer.setListener(bitmap -> imageView.post(() -> imageView.setImageBitmap(bitmap)));
-                        CameraController.getInstance().setAnalyzer(analyzer);
+                        cameraController.setAnalyzer(analyzer);
                         break;
                     case 1:
                         analyzer = new GrayscaleAnalyzer();
                         analyzer.setListener(bitmap -> imageView.post(() -> imageView.setImageBitmap(bitmap)));
-                        CameraController.getInstance().setAnalyzer(analyzer);
+                        cameraController.setAnalyzer(analyzer);
                         break;
                     case 2:
                         analyzer = new InvertAnalyzer();
                         analyzer.setListener(bitmap -> imageView.post(() -> imageView.setImageBitmap(bitmap)));
-                        CameraController.getInstance().setAnalyzer(analyzer);
+                        cameraController.setAnalyzer(analyzer);
                         break;
                     case 3:
                         analyzer = new RedAnalyzer(requireActivity());
                         analyzer.setListener(bitmap -> imageView.post(() -> imageView.setImageBitmap(bitmap)));
-                        CameraController.getInstance().setAnalyzer(analyzer);
+                        cameraController.setAnalyzer(analyzer);
                         break;
                 }
+
+                oldAnalyzer = analyzer;
             }
 
             @Override
@@ -96,24 +109,40 @@ public class CameraAnalyzerFragment extends Fragment {
         return view;
     }
 
+    public void OnStopClicked(View view) {
+        if (cameraController.getAnalyzer() != null) {
+            cameraController.setAnalyzer(null);
+        } else {
+            cameraController.setAnalyzer(oldAnalyzer);
+        }
+    }
+
     @Override
     public void onResume() {
         // Create modular Analyzer to use
         super.onResume();
 
-        // TODO: Set Spinner on whatever it was bevor the Stop
-        ModularAnalyzer analyzer = new PassThroughAnalyzer();
+        ModularAnalyzer analyzer = null;
+
+        if (oldAnalyzer != null) {
+            analyzer = oldAnalyzer;
+        } else
+        {
+            analyzer = new PassThroughAnalyzer();
+        }
+
         analyzer.setListener(bitmap -> imageView.post(() -> imageView.setImageBitmap(bitmap)));
 
         // Set analyzer for the Camera
-        CameraController.getInstance().setAnalyzer(analyzer);
+        cameraController.setAnalyzer(analyzer);
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        cameraController.setAnalyzer(null);
 
-        CameraController.getInstance().setAnalyzer(null);
+        ORBManager.move("Stop",0, 0);
     }
 
     @Override
