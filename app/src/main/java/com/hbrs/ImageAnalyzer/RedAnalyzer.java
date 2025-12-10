@@ -12,6 +12,9 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 
+import com.hbrs.ORB.ORBManager;
+import com.hbrs.ORB.ORBManager;
+
 public class RedAnalyzer extends ModularAnalyzer {
 
     private final Context context;
@@ -153,6 +156,67 @@ public class RedAnalyzer extends ModularAnalyzer {
         }
 
 
+
+        if (!ballBoxes.isEmpty()) {
+
+            Rect target = ballBoxes.get(0);
+            for (Rect r : ballBoxes) {
+                if ((r.width() * r.height()) > (target.width() * target.height())) {
+                    target = r;
+                }
+            }
+
+            canvas.drawRect(target, paint);
+
+            int cx = target.centerX();
+            int cy = target.centerY();
+            int size = target.width() * target.height();
+
+            followBall(cx, cy, size, width);
+
+        } else {
+
+            sendMotorCommand(-350, 350); // Langsam drehen
+            // TODO wollen wir das wirklich
+        }
+
         return bitmap;
+    }
+    private void followBall(int cx, int cy, int size, int imageWidth) {
+
+        int center = imageWidth / 2;
+        int deadZone = 40;
+        int offset =30;
+        int midZone = 120;
+        int targetSize = 17000;
+        int baseSpeed = 600;
+        int backSpeed = -400;
+
+        // 1) Ball ist zu nah -> rückwärts fahren
+        if (size > targetSize) {
+            sendMotorCommand(backSpeed, backSpeed);
+            return;
+        }
+
+        // 2) Ball ist zu weit links
+        if ( (cx + offset) < center ) {
+            sendMotorCommand(backSpeed, baseSpeed);
+            return;
+        }
+
+        // 3) Ball ist zu weit rechts
+        if ( (cx - offset) > center ) {
+            sendMotorCommand(baseSpeed, backSpeed);
+            return;
+        }
+
+
+
+        sendMotorCommand(baseSpeed, baseSpeed);
+    }
+
+
+    private void sendMotorCommand(int left, int right) {
+        ORBManager.move("RedAnalyzer Follow", left, right);
     }
 }
