@@ -220,3 +220,6 @@ public class RedAnalyzer extends ModularAnalyzer {
         ORBManager.move("RedAnalyzer Follow", left, right);
     }
 }
+
+
+// TODO Merken welcher Analyzer ausgewählt war, wenn die App geschlafen hat diesen wieder auswählen.
