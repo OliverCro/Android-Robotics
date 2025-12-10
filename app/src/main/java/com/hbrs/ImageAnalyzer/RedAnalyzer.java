@@ -192,6 +192,8 @@ public class RedAnalyzer extends ModularAnalyzer {
         int baseSpeed = 600;
         int backSpeed = -400;
 
+
+
         // 1) Ball ist zu nah -> rückwärts fahren
         if (size > targetSize) {
             sendMotorCommand(backSpeed, backSpeed);
@@ -221,5 +223,5 @@ public class RedAnalyzer extends ModularAnalyzer {
     }
 }
 
-
+// TODO P-D Regler implementieren um besser und exakter zu regeln
 // TODO Merken welcher Analyzer ausgewählt war, wenn die App geschlafen hat diesen wieder auswählen.
