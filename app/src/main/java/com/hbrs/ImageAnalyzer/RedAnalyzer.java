@@ -13,11 +13,23 @@ import java.util.Deque;
 import java.util.List;
 
 import com.hbrs.ORB.ORBManager;
-import com.hbrs.ORB.ORBManager;
 
 public class RedAnalyzer extends ModularAnalyzer {
 
     private final Context context;
+
+    // ================= PID Parameter =================
+    private float kp = 2.0f;//1.2f;
+    private float ki = 0.0f;
+    private float kd = 0.5f;//0.35f;
+
+    // ================= PID Zustand =================
+    private float integral = 0;
+    private float lastError = 0;
+
+    // ================= PID Limits =================
+    private float integralLimit = 1000;
+    private int maxTurn = 400;
 
     public RedAnalyzer(Context context) {
         this.context = context;
@@ -25,6 +37,7 @@ public class RedAnalyzer extends ModularAnalyzer {
 
     @Override
     public Bitmap doAnalysis(Bitmap bitmap) {
+
         if (!bitmap.isMutable()) {
             bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
         }
@@ -37,7 +50,7 @@ public class RedAnalyzer extends ModularAnalyzer {
 
         boolean[] isRedMask = new boolean[width * height];
 
-        // Rot erkennen + Rest grau
+        // ================= Rot-Erkennung =================
         for (int i = 0; i < pixels.length; i++) {
             int c = pixels[i];
             int r = (c >> 16) & 0xFF;
@@ -66,7 +79,7 @@ public class RedAnalyzer extends ModularAnalyzer {
 
         bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
 
-
+        // ================= Connected Components =================
         boolean[] visited = new boolean[width * height];
         List<Rect> ballBoxes = new ArrayList<>();
 
@@ -75,12 +88,13 @@ public class RedAnalyzer extends ModularAnalyzer {
 
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
+
                 int idx = y * width + x;
                 if (!isRedMask[idx] || visited[idx]) continue;
 
                 int minX = x, maxX = x;
                 int minY = y, maxY = y;
-                int area = 0; // Anzahl roter Pixel in dieser Komponente
+                int area = 0;
 
                 Deque<int[]> queue = new ArrayDeque<>();
                 queue.add(new int[]{x, y});
@@ -101,7 +115,9 @@ public class RedAnalyzer extends ModularAnalyzer {
                     for (int k = 0; k < 4; k++) {
                         int nx = cx + dx[k];
                         int ny = cy + dy[k];
-                        if (nx < 0 || nx >= width || ny < 0 || ny >= height) continue;
+
+                        if (nx < 0 || nx >= width || ny < 0 || ny >= height)
+                            continue;
 
                         int nIdx = ny * width + nx;
                         if (!visited[nIdx] && isRedMask[nIdx]) {
@@ -114,114 +130,103 @@ public class RedAnalyzer extends ModularAnalyzer {
                 int boxWidth = maxX - minX + 1;
                 int boxHeight = maxY - minY + 1;
 
-                // kleine Flecken ignorieren
-                int minSize = 40; //
-                if (boxWidth < minSize || boxHeight < minSize) continue;
+                if (boxWidth < 40 || boxHeight < 40) continue;
 
-                // Ball Check
-
-                // Aspect Ratio ~ 1
                 float aspect = boxWidth > boxHeight
                         ? (float) boxWidth / boxHeight
                         : (float) boxHeight / boxWidth;
-                if (aspect > 1.3f) {
-                    // zu länglich -> kein Ball
-                    continue;
-                }
+                if (aspect > 1.3f) continue;
 
-                // Füllgrad
-                float boxArea = boxWidth * boxHeight;
-                float fill = area / boxArea; // Anteil rote Pixel in der Box
+                float fill = area / (float) (boxWidth * boxHeight);
+                if (fill < 0.5f || fill > 0.9f) continue;
 
-                // idealer Kreis in Box: ~0.78
-                if (fill < 0.5f || fill > 0.9f) {
-                    // zu leer oder zu voll (komische Form)
-                    continue;
-                }
-
-                // Wenn beide Checks passen, als Ball akzeptieren
                 ballBoxes.add(new Rect(minX, minY, maxX, maxY));
             }
         }
 
-        //Bälle markieren
+        // ================= Boxen zeichnen =================
         Canvas canvas = new Canvas(bitmap);
         Paint paint = new Paint();
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeWidth(4f);
         paint.setColor(Color.GREEN);
 
-        for (Rect rect : ballBoxes) {
-            canvas.drawRect(rect, paint);
+        for (Rect r : ballBoxes) {
+            canvas.drawRect(r, paint);
         }
 
-
-
+        // ================= Ball verfolgen =================
         if (!ballBoxes.isEmpty()) {
 
             Rect target = ballBoxes.get(0);
             for (Rect r : ballBoxes) {
-                if ((r.width() * r.height()) > (target.width() * target.height())) {
+                if (r.width() * r.height() > target.width() * target.height()) {
                     target = r;
                 }
             }
 
             canvas.drawRect(target, paint);
 
-            int cx = target.centerX();
-            int cy = target.centerY();
-            int size = target.width() * target.height();
-
-            followBall(cx, cy, size, width);
+            followBall(
+                    target.centerX(),
+                    target.centerY(),
+                    target.width() * target.height(),
+                    width
+            );
 
         } else {
-
-            sendMotorCommand(-350, 350); // Langsam drehen
+            //sendMotorCommand(-350, 350); // Langsam drehen
             // TODO wollen wir das wirklich
+            resetPID();
         }
 
         return bitmap;
     }
+
+    // ================= PID Ball-Follower =================
     private void followBall(int cx, int cy, int size, int imageWidth) {
 
         int center = imageWidth / 2;
-        int deadZone = 40;
-        int offset =30;
-        int midZone = 120;
-        int targetSize = 17000;
-        int baseSpeed = 600;
+        int baseSpeed = 500;
         int backSpeed = -400;
+        int targetSize = 17000;
 
-
-
-        // 1) Ball ist zu nah -> rückwärts fahren
         if (size > targetSize) {
             sendMotorCommand(backSpeed, backSpeed);
+            resetPID();
             return;
         }
 
-        // 2) Ball ist zu weit links
-        if ( (cx + offset) < center ) {
-            sendMotorCommand(backSpeed, baseSpeed);
-            return;
-        }
+        float error = center - cx;
 
-        // 3) Ball ist zu weit rechts
-        if ( (cx - offset) > center ) {
-            sendMotorCommand(baseSpeed, backSpeed);
-            return;
-        }
+        integral += error;
+        if (integral > integralLimit) integral = integralLimit;
+        if (integral < -integralLimit) integral = -integralLimit;
 
+        float derivative = error - lastError;
+        lastError = error;
 
+        float turn = kp * error + ki * integral + kd * derivative;
 
-        sendMotorCommand(baseSpeed, baseSpeed);
+        if (turn > maxTurn) turn = maxTurn;
+        if (turn < -maxTurn) turn = -maxTurn;
+
+        int leftSpeed = (int) (baseSpeed + turn);
+        int rightSpeed = (int) (baseSpeed - turn);
+
+        sendMotorCommand(leftSpeed, rightSpeed);
     }
 
+    private void resetPID() {
+        integral = 0;
+        lastError = 0;
+    }
 
     private void sendMotorCommand(int left, int right) {
-        ORBManager.move("RedAnalyzer Follow", left, right);
+        ORBManager.move("RedAnalyzer PID Follow", left, right);
     }
 }
+
 
 // TODO P-D Regler implementieren um besser und exakter zu regeln
 // TODO Merken welcher Analyzer ausgewählt war, wenn die App geschlafen hat diesen wieder auswählen.
