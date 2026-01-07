@@ -16,12 +16,6 @@
             android:layout_width="wrap_content"
             android:spinnerMode="dropdown"/>
 
-        <Button
-            android:id="@+id/toggle_filter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Toogle"/>
-
     </LinearLayout>
 
     <!-- The analyzed output image -->
@@ -32,5 +26,11 @@
         android:layout_weight="1"
         android:scaleType="fitCenter"
         android:importantForContentCapture="no"/>
+
+    <Button
+        android:id="@+id/toggle_filter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Toogle" />
 
 </LinearLayout>

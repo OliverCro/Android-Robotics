@@ -18,6 +18,7 @@ import com.hbrs.ImageAnalyzer.CameraController;
 import com.hbrs.ImageAnalyzer.GrayscaleAnalyzer;
 import com.hbrs.ImageAnalyzer.InvertAnalyzer;
 import com.hbrs.ImageAnalyzer.RedAnalyzer;
+import com.hbrs.ORB.ORB;
 import com.hbrs.ORB.ORBManager;
 import com.hbrs.R;
 import com.hbrs.ImageAnalyzer.ModularAnalyzer;
@@ -112,6 +113,7 @@ public class CameraAnalyzerFragment extends Fragment {
     public void OnStopClicked(View view) {
         if (cameraController.getAnalyzer() != null) {
             cameraController.setAnalyzer(null);
+            ORBManager.move("Camera Analyzer",0,0);
         } else {
             cameraController.setAnalyzer(oldAnalyzer);
         }
@@ -147,6 +149,7 @@ public class CameraAnalyzerFragment extends Fragment {
 
     @Override
     public void onDestroy() {
+        ORBManager.move("Camera Analyzer",0,0);
         super.onDestroy();
     }
 }
