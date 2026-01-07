@@ -17,19 +17,19 @@ import com.hbrs.ORB.ORBManager;
 public class RedAnalyzer extends ModularAnalyzer {
 
     private final Context context;
-
+    private int framesWithoutDetection = 0;
     // ================= PID Parameter =================
-    private float kp = 2.0f;//1.2f;
-    private float ki = 0.0f;
-    private float kd = 0.5f;//0.35f;
+    private final float kp = 1.2f;//1.2f;
+    private final float ki = 0.0f;
+    private final float kd = 0.35f;//0.35f;
 
     // ================= PID Zustand =================
     private float integral = 0;
     private float lastError = 0;
 
     // ================= PID Limits =================
-    private float integralLimit = 1000;
-    private int maxTurn = 400;
+    private final float integralLimit = 1000;
+    private final int maxTurn = 400;
 
     public RedAnalyzer(Context context) {
         this.context = context;
@@ -66,7 +66,7 @@ public class RedAnalyzer extends ModularAnalyzer {
                 float hue = (60 * ((g - b) / (float) delta) + 360) % 360;
                 float sat = delta / (float) max;
                 float val = max / 255f;
-                isRed = ((hue < 15 || hue > 345) && sat > 0.35f && val > 0.2f);
+                isRed = ((hue < 5 || hue > 345) && sat > 0.35f && val > 0.2f);
             }
 
             isRedMask[i] = isRed;
@@ -177,6 +177,11 @@ public class RedAnalyzer extends ModularAnalyzer {
         } else {
             //sendMotorCommand(-350, 350); // Langsam drehen
             // TODO wollen wir das wirklich
+            if(framesWithoutDetection > 5){
+                sendMotorCommand(0,0);
+                framesWithoutDetection = 0;
+            }
+            framesWithoutDetection++;
             resetPID();
         }
 
@@ -191,12 +196,16 @@ public class RedAnalyzer extends ModularAnalyzer {
         int backSpeed = -400;
         int targetSize = 17000;
 
-        if (size > targetSize) {
+        if (size > 1.2f * targetSize) {
             sendMotorCommand(backSpeed, backSpeed);
             resetPID();
             return;
         }
-
+        if (size > targetSize) {
+            sendMotorCommand(0,0);
+            resetPID();
+            return;
+        }
         float error = center - cx;
 
         integral += error;
@@ -215,6 +224,7 @@ public class RedAnalyzer extends ModularAnalyzer {
         int rightSpeed = (int) (baseSpeed - turn);
 
         sendMotorCommand(leftSpeed, rightSpeed);
+        resetPID();
     }
 
     private void resetPID() {
