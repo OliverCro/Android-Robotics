@@ -35,7 +35,7 @@ public class GyroView extends BaseControlView implements SensorEventListener {
 
     private float pitch = 0f;  // front/back tilt
     private float roll = 0f;   // side tilt
-    private final float maxAngle = 20f; // Maximum angle x° to max output
+    private final float maxAngle = 20f; // Maximum angle x (degree) to max output
 
     // === Constructors ===
     public GyroView(Context context) {
@@ -132,6 +132,7 @@ public class GyroView extends BaseControlView implements SensorEventListener {
     // === Sensor logic ===
     @Override
     public void onSensorChanged(SensorEvent event) {
+        // Smooth noisy sensor data by combining with previous data
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             for (int i = 0; i < 3; i++)
                 gravity[i] = FILTER_ALPHA * gravity[i] + (1 - FILTER_ALPHA) * event.values[i];
@@ -140,12 +141,14 @@ public class GyroView extends BaseControlView implements SensorEventListener {
                 geomagnetic[i] = FILTER_ALPHA * geomagnetic[i] + (1 - FILTER_ALPHA) * event.values[i];
         }
 
+        // Determine device rotation
         float[] R = new float[9];
         float[] I = new float[9];
         if (SensorManager.getRotationMatrix(R, I, gravity, geomagnetic)) {
             float[] orientation = new float[3];
             SensorManager.getOrientation(R, orientation);
 
+            // convert from radius to degree
             pitch = (float) Math.toDegrees(orientation[1]);
             roll = (float) Math.toDegrees(orientation[2]);
 
@@ -153,6 +156,7 @@ public class GyroView extends BaseControlView implements SensorEventListener {
             pitch = Math.max(-maxAngle, Math.min(maxAngle, pitch));
             roll = Math.max(-maxAngle, Math.min(maxAngle, roll));
 
+            // trigger redraw
             invalidate();
         }
     }

@@ -10,22 +10,6 @@ import android.view.View;
 
 import com.hbrs.R;
 
-/**
- * BaseControlView
- * --------------------
- * A reusable abstract base class for circular, interactive control views
- * It handles common features like:
- *  - Drawing a circular base area
- *  - Drawing a center dot
- *  - Rendering the movable handle/knob (color + paint)
- *  - Geometric scaling and centering
- *  - Angle-to-percent mapping and linear interpolation
- *  - Motion listener callbacks
- *
- * Subclasses only need to:
- *  - Implement drawHandle(Canvas)
- *  - Optionally override onBaseSizeChanged() for geometry recalculation
- */
 public abstract class BaseControlView extends View {
 
     // === Style and Size Attributes ===
@@ -95,7 +79,6 @@ public abstract class BaseControlView extends View {
     }
 
     // === Initialization ===
-
     // Reads attributes, applies defaults, and prepares paint objects
     protected void initialize(Context context, AttributeSet attrs) {
         // Default visual values
@@ -214,28 +197,5 @@ public abstract class BaseControlView extends View {
         // Scale vector down if outside the base circle
         float scale = baseCircleRadius / distance;
         return new float[]{dx * scale, dy * scale, 1f};
-    }
-
-    // === Optional Runtime Setters for Dynamic Styling ===
-
-    // Change the handle color dynamically
-    public void setHandleColor(int newColor) {
-        handleCircleColor = newColor;
-        handlePaint.setColor(newColor);
-        invalidate();
-    }
-
-    // Change the base circle color dynamically
-    public void setBaseCircleColor(int newColor) {
-        baseCircleColor = newColor;
-        baseCirclePaint.setColor(newColor);
-        invalidate();
-    }
-
-    // Change the center dot color dynamically
-    public void setCenterDotColor(int newColor) {
-        centerDotColor = newColor;
-        centerDotPaint.setColor(newColor);
-        invalidate();
     }
 }
