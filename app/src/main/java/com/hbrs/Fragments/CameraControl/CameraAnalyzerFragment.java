@@ -56,6 +56,7 @@ public class CameraAnalyzerFragment extends Fragment {
 
 
         // Create options for spinner
+        //                      0              1              2              3
         String[] options = {"Red Filter", "Passthrough", "Grayscale", "Inverted Colors"};
 
         // Create ArrayAdapter
@@ -76,23 +77,23 @@ public class CameraAnalyzerFragment extends Fragment {
                 ModularAnalyzer analyzer = null;
 
                 switch (position) {
-                    case 3:
-                        analyzer = new PassThroughAnalyzer();
+                    case 0:
+                        analyzer = new RedAnalyzer(requireActivity());
                         analyzer.setListener(bitmap -> imageView.post(() -> imageView.setImageBitmap(bitmap)));
                         cameraController.setAnalyzer(analyzer);
                         break;
                     case 1:
-                        analyzer = new GrayscaleAnalyzer();
+                        analyzer = new PassThroughAnalyzer();
                         analyzer.setListener(bitmap -> imageView.post(() -> imageView.setImageBitmap(bitmap)));
                         cameraController.setAnalyzer(analyzer);
                         break;
                     case 2:
-                        analyzer = new InvertAnalyzer();
+                        analyzer = new GrayscaleAnalyzer();
                         analyzer.setListener(bitmap -> imageView.post(() -> imageView.setImageBitmap(bitmap)));
                         cameraController.setAnalyzer(analyzer);
                         break;
-                    case 0:
-                        analyzer = new RedAnalyzer(requireActivity());
+                    case 3:
+                        analyzer = new InvertAnalyzer();
                         analyzer.setListener(bitmap -> imageView.post(() -> imageView.setImageBitmap(bitmap)));
                         cameraController.setAnalyzer(analyzer);
                         break;
