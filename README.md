@@ -1,23 +1,38 @@
-# Android Robotics
- 
+# Robo Pilot – Android Robotik Projekt
 
-## Loop through bitmap and find red pixels
+Robo Pilot ist eine Android-App zur Steuerung eines mobilen Roboters via Bluetooth.
+Das Projekt wurde im Rahmen des Moduls **Android Robotik Projekt** an der Hochschule Bonn-Rhein-Sieg (HBRS) entwickelt.
 
-## Search for ball candidates
-In order to not track every red pixel as an potential ball, a choice was made to simplify this process.
-In order to make a candidate for being a ball, a group of pixel of the size of 40 was created.
-## determine if red pixel group is a ball
-In order to determine if a group of red pixels is a ball, the following algorithm was used
+Die App ermöglicht sowohl eine manuelle Steuerung des Roboters als auch einen autonomen Kameramodus, bei dem der Roboter einem roten Objekt folgt.
 
-1. Measure the maximal width of the group of red pixels.
-2. Measure the maximal height of the group of red pixels
-3. compare height and width and check if they are in the same range.
-4. If both measurements are in the same range, determine the pixels as ball and mark the group.
-   If both measurement are not in the same range, determine the pixels not as ball and skip the group.
+## Funktionen der App
 
+### Manuelle Steuerung (Analog Control)
 
-## Controls via size and position
-If the Ball is smaller than the optimum, the ball is too far away so the robot must move forward.
-If the Ball is bigger than the optimum, the ball is to close so the robot must move backward.
-If the Ball changes position to the right, the ball moved to the right so the robot has to turn as well.
-If the Ball changes position to the left, the ball moved to the left so the robot has to turn as well.
+Die App bietet mehrere Möglichkeiten zur direkten Steuerung des Roboters:
+- Buttons (Klassische Vorwärts-, Rückwärts-, Links-, Rechts-Befehle)
+- Joystick (Stufenlose Richtungs- und Geschwindigkeitskontrolle)
+- Gyroskop (Bewegung des Roboters durch Neigen des Smartphones)
+
+### Autonome Kamera Steuerung
+Der Roboter kann mithilfe der Smartphone-Kamera autonom gesteuert werden.
+
+Roter Objekt-Tracker
+- Echtzeit-Erkennung roter Objekte im Kamerabild
+- Segmentierung und Connected-Component-Analyse
+- Auswahl des größten erkannten Objekts als Ziel
+- Visuelle Markierung des erkannten Objekts
+- Automatische Bewegungssteuerung basierend auf Objektposition
+
+Autonome Bewegungslogik
+Der Roboter:
+- folgt einem roten Ball
+- dreht sich zur Objektmitte
+- stoppt oder fährt rückwärts bei zu geringem Abstand
+PID-basierte Regelung für sanfte Richtungsanpassung
+
+## Autoren
+- [Christian Haubrichs](https://github.com/MadlifeChrisis)
+- [Bernhard Winkelhake](https://github.com/Bernhard-Winkelhake)
+- [Oliver Groß](https://github.com/OliverCro)
+  
