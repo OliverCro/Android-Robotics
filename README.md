@@ -1,11 +1,15 @@
 # Robo Pilot – Android Robotik Projekt
 
+<img src="./documentation/Logo.png" alt="Logo" width="200" height="200">
+
 Robo Pilot ist eine Android-App zur Steuerung eines mobilen Roboters via Bluetooth.
 Das Projekt wurde im Rahmen des Moduls **Android Robotik Projekt** an der Hochschule Bonn-Rhein-Sieg (HBRS) entwickelt.
 
 Die App ermöglicht sowohl eine manuelle Steuerung des Roboters als auch einen autonomen Kameramodus, bei dem der Roboter einem roten Objekt folgt.
 
 ## Funktionen der App
+
+<img src="./documentation/App Flow.png" alt="Logo" width="900" height="900">
 
 ### Manuelle Steuerung (Analog Control)
 
@@ -35,4 +39,3 @@ PID-basierte Regelung für sanfte Richtungsanpassung
 - [Christian Haubrichs](https://github.com/MadlifeChrisis)
 - [Bernhard Winkelhake](https://github.com/Bernhard-Winkelhake)
 - [Oliver Groß](https://github.com/OliverCro)
-  
